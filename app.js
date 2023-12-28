@@ -1,19 +1,20 @@
-const http = require('http');
-
 const express = require('express');
 
 const app = express();
 
-app.use((req, res, next) => {
-    console.log('In middleware 1');
-    next(); // Allows the request to continue to the next middleware if exists.
+app.use('/', (req, res, next) => {
+    console.log('In middleware for root path (always runs)');
+    next();
 });
 
-app.use((req, res, next) => {
-    console.log('In middleware 2');
+app.use('/add-product', (req, res, next) => {
+    console.log('In middleware for add product');
+    res.send('<h1>Hello from add product page</h1>');
+});
+
+app.use('/', (req, res, next) => {
+    console.log('In middleware for express.js page');
     res.send('<h1>Hello from Express.js</h1>');
 });
 
-const server = http.createServer(app);
-
-server.listen(3080);
+const server = app.listen(3080);
