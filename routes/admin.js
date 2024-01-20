@@ -8,7 +8,8 @@ const products = [];
 
 router.get('/add-product', (req, res, next) => {
     console.log('In middleware for add product (admin.js)');
-    res.sendFile(path.join(rootDir, 'views', 'add-product.html'));
+    res.render('add-product', { path123: '/admin/add-product' });
+    
 });
 
 router.post('/add-product1234', (req, res, next) => {
