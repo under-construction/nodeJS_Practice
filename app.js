@@ -18,7 +18,7 @@ app.use('/admin', adminData.routes);
 app.use(shopRoutes);
 
 app.use((req, res, next) => {
-    res.status(404).sendFile(path.join(rootDir, 'views123', '404.html'));
+    res.render('404');
 });
 
 const server = app.listen(3080);
