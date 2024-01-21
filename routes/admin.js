@@ -8,7 +8,7 @@ const products = [];
 
 router.get('/add-product', (req, res, next) => {
     console.log('In middleware for add product (admin.js)');
-    res.render('add-product', { path123: '/admin/add-product' });
+    res.render('add-product', { path123: '/admin/add-product', pageTitle123: 'Add Product', formsCSS: true, productsCSS: true, activeAddProduct: true });
     
 });
 

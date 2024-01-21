@@ -5,7 +5,7 @@ const rootDir = require('./util/path');
 
 const app = express();
 
-app.set('view engine', 'pug');
+app.set('view engine', 'ejs');
 app.set('views', 'views123');
 
 app.use(bodyParser.urlencoded({extended: false}));
@@ -18,7 +18,7 @@ app.use('/admin', adminData.routes);
 app.use(shopRoutes);
 
 app.use((req, res, next) => {
-    res.render('404');
+    res.render('404', {pageTitle123: 'Page Not Found!', path123: 'ssss'});
 });
 
 const server = app.listen(3080);
