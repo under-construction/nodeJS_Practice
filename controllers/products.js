@@ -1,4 +1,4 @@
-const products = [];
+const productModel = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
     console.log('In middleware for add product (admin.js)');
@@ -12,11 +12,13 @@ exports.getAddProduct = (req, res, next) => {
 }
 
 exports.postAddProduct = (req, res, next) => {
-    products.push({ title: req.body.title });
+    const product = new productModel(req.body.title);
+    product.save();
     res.redirect('/');
 }
 
 exports.getProducts = (req, res, next) => {
+    const products = productModel.fetchAll();
     res.render('shop123', { 
         prods: products, 
         pageTitle123: 'Shop123', 
