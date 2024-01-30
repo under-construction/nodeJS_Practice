@@ -2,7 +2,7 @@ const productModel = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
     console.log('In middleware for add product (admin.js)');
-    res.render('add-product', { 
+    res.render('admin123/add-product', { 
         path123: '/admin/add-product', 
         pageTitle123: 'Add Product', 
         formsCSS: true, 
@@ -19,7 +19,7 @@ exports.postAddProduct = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
     productModel.fetchAll(products => {
-        res.render('shop123', { 
+        res.render('shop123/shop-product-list', { 
             prods: products, 
             pageTitle123: 'Shop123', 
             path123: '/shop', 
