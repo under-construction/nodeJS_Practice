@@ -16,7 +16,7 @@ app.use(express.static(path.join(__dirname, 'public1234')));
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
-app.use('/admin', adminRoutes);
+app.use('/admin123', adminRoutes);
 app.use(shopRoutes);
 
 app.use(notFound404Controller.notFound404);
