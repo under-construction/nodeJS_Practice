@@ -29,3 +29,10 @@ exports.getProducts = (req, res, next) => {
         });
     });
 }
+
+exports.getProductDetail = (req, res, next) => {
+    res.render('shop123/product-detail', {
+       pageTitle123: 'Product Detail',
+       path123: 'product-detail'
+    });
+}
