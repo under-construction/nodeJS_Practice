@@ -5,7 +5,7 @@ exports.getProducts = (req, res, next) => {
         res.render('shop123/shop-product-list', { 
             prods: products, 
             pageTitle123: 'Shop123', 
-            path123: '/shop' 
+            path123: '/products' 
         });
     });
 }
