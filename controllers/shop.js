@@ -40,3 +40,9 @@ exports.getOrders = (req, res, next) => {
         pageTitle123: 'Orders'
     })
 }
+
+exports.getProductDetail = (req, res, next) => {
+    const productId = req.params.productId123;
+    console.log(`productId: ${productId}`);
+    res.redirect('/');
+}
