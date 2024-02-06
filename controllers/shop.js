@@ -1,3 +1,4 @@
+const Product = require('../models/product');
 const productModel = require('../models/product');
 
 exports.getProducts = (req, res, next) => {
@@ -43,6 +44,11 @@ exports.getOrders = (req, res, next) => {
 
 exports.getProductDetail = (req, res, next) => {
     const productId = req.params.productId123;
-    console.log(`productId: ${productId}`);
-    res.redirect('/');
+    Product.getById(productId, product => {
+        res.render('shop123/product-detail', {
+            path123: `/products`,
+            pageTitle123: `Product Detail: ${product.title}`,
+            product: product
+        });
+    });
 }
