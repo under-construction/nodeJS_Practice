@@ -28,6 +28,10 @@ exports.getCart = (req, res, next) => {
     });
 }
 
+exports.postCart = (req, res, next) => {
+    console.log(req.body.productId123);
+}
+
 exports.getCheckOut = (req, res, next) => {
     res.render('shop123/checkout', {
         path123: '/checkout',
