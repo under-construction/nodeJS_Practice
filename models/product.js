@@ -50,4 +50,15 @@ module.exports = class Product {
             cb(product);
         });
     }
+
+    static remove(id) {
+        getProductsFromFile(products => {
+            const existingProductIndex = products.findIndex(p => p.id === id);
+
+            if (existingProductIndex) {
+                products = products.filter(i => i.id !== id);
+                fs.writeFile(filePath, JSON.stringify(products), err => console.log(err));
+            }
+        });
+    }
 }
