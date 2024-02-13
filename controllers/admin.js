@@ -3,8 +3,8 @@ const productModel = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
     console.log('In middleware for add product (admin.js)');
-    res.render('admin123/edit-product', { 
-        path123: '/admin/add-product', 
+    res.render('admin123/edit-product', {
+        path123: '/admin/add-product',
         pageTitle123: 'Add Product',
         editing: false
     });
@@ -35,7 +35,7 @@ exports.getEditProduct = (req, res, next) => {
             res.render('/');
         }
         res.render('admin123/edit-product', {
-            path123: '/admin/edit-product', 
+            path123: '/admin/edit-product',
             pageTitle123: 'Edit Product',
             editing: true,
             product: product
@@ -59,10 +59,15 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
     productModel.fetchAll(products => {
-        res.render('admin123/admin-product-list', { 
-            prods: products, 
-            pageTitle123: 'Admin Products', 
-            path123: '/admin/product-list' 
+        res.render('admin123/admin-product-list', {
+            prods: products,
+            pageTitle123: 'Admin Products',
+            path123: '/admin/product-list'
         });
     });
+}
+
+exports.deleteProduct = (req, res, next) => {
+    Product.remove(req.params.productId123);
+    res.redirect('/');
 }
