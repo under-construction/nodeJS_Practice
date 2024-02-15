@@ -14,7 +14,7 @@
                             <h1 class="product__title"><%= product.title %></h1>
                         </header>
                         <div class="card__image">
-                            <img src="<%= product.imageUrl %>" alt="<%= product.title %>">
+                            <img src="<%= product.imageUrl %>" alt="<%= product.title %>" title="<%= product.id %>">
                         </div>
                         <div class="card__content">
                             <h2 class="product__price">$<%= product.price %></h2>
@@ -23,6 +23,11 @@
                         <div class="card__actions">
                             <a href="/products/<%= product.id %>" class="btn">Details</a>
                             <%- include('../includes123/addToCart.ejs', {product: product}) %>
+                            <form action="/delete-product" method="post">
+                                <input type="hidden" name="productId123" value="<%= product.id %>">
+                                <input type="hidden" name="productPrice123" value="<%= product.price %>">
+                                <button class="btn" type="submit">Delete From Cart</button>
+                            </form>
                         </div>
                     </article>
                 <% } %>
