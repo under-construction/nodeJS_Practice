@@ -68,6 +68,5 @@ exports.getProducts = (req, res, next) => {
 }
 
 exports.deleteProduct = (req, res, next) => {
-    Product.remove(req.params.productId123);
-    res.redirect('/');
+    Product.remove(req.params.productId123, () => res.redirect('/'));
 }
