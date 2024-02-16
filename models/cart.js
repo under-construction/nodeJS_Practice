@@ -86,4 +86,14 @@ module.exports = class Cart {
             cb();
         });
     }
+
+    static clearCart(cb) {
+        this.getCart(cart => {
+            cart.products = [];
+            cart.totalPrice = 0;
+
+            fs.writeFile(filePath, JSON.stringify(cart), err => console.log(err));
+            cb();
+        });
+    }
 }
