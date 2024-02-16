@@ -83,7 +83,9 @@ exports.getProductDetail = (req, res, next) => {
 exports.deleteProductFromCart = (req, res, next) => {
     const productId = req.body.productId123;
     const productPrice = req.body.productPrice123;
-    Cart.deleteProduct(productId, productPrice, () => res.redirect('/cart'));
+    Product.getById(productId, product => {
+        Cart.deleteProduct(productId, product.price, () => res.redirect('/cart'));
+    });
 }
 
 exports.clearCart = (req, res, next) => {
