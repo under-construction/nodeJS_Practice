@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const rootDir = require('../util/path');
 const Cart = require('./cart');
+const db = require('../util/database');
 
 const filePath = path.join(rootDir, 'data123', 'products123.json');
 
@@ -12,6 +13,10 @@ const getProductsFromFile = cb => {
         }
         cb(JSON.parse(fileContent));
     });
+}
+
+const getProductsFromDB = () => {
+    return db.execute('SELECT * FROM products');
 }
 
 module.exports = class Product {
@@ -42,7 +47,11 @@ module.exports = class Product {
     }
 
     static fetchAll(cb) {
-        getProductsFromFile(cb);
+        return getProductsFromFile(cb);
+    }
+
+    static fetchAllDB() {
+        return getProductsFromDB();
     }
 
     static getById(id, cb) {
