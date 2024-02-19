@@ -18,7 +18,13 @@ app.use(express.static(path.join(__dirname, 'public1234')));
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
-db.execute('SELECT * FROM PRODUCTS');
+db.execute('SELECT * FROM PRODUCTS')
+    .then(res => {
+        console.log('result: ', res);
+    })
+    .catch(err => {
+        console.log('error: ', err);
+    });
 
 app.use('/admin123', adminRoutes);
 app.use(shopRoutes);
