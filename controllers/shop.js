@@ -3,13 +3,17 @@ const Product = require('../models/product');
 const productModel = require('../models/product');
 
 exports.getProducts = (req, res, next) => {
-    productModel.fetchAll(products => {
-        res.render('shop123/shop-product-list', {
-            prods: products,
-            pageTitle123: 'Shop123',
-            path123: '/products'
+    productModel.fetchAllDB()
+        .then(([a, b]) => {
+            res.render('shop123/shop-product-list', {
+                prods: a,
+                pageTitle123: 'Shop123',
+                path123: '/products'
+            });
+        })
+        .catch(err => {
+            console.log(err);
         });
-    });
 }
 
 exports.getIndex = (req, res, next) => {
