@@ -3,31 +3,27 @@ const Product = require('../models/product');
 const productModel = require('../models/product');
 
 exports.getProducts = (req, res, next) => {
-    productModel.fetchAllDB()
-        .then(([a, b]) => {
+    Product.findAll()
+        .then(data => {
             res.render('shop123/shop-product-list', {
-                prods: a,
+                prods: data,
                 pageTitle123: 'Shop123',
                 path123: '/products'
             });
         })
-        .catch(err => {
-            console.log(err);
-        });
+        .catch(err => console.log(err));
 }
 
 exports.getIndex = (req, res, next) => {
-    productModel.fetchAllDB()
-        .then(([a, b]) => {
+    Product.findAll()
+        .then(data => {
             res.render('shop123/index', {
-                prods: a,
+                prods: data,
                 pageTitle123: 'Shop123',
                 path123: '/shop'
             });
         })
-        .catch(err => {
-            console.log(err);
-        });
+        .catch(err => console.log(err));
 }
 
 exports.getCart = (req, res, next) => {
