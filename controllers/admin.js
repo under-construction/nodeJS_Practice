@@ -63,10 +63,10 @@ exports.postEditProduct = (req, res, next) => {
 }
 
 exports.getProducts = (req, res, next) => {
-    productModel.fetchAllDB()
-        .then(([a, b]) => {
+    Product.findAll()
+        .then(data => {
             res.render('admin123/admin-product-list', {
-                prods: a,
+                prods: data,
                 pageTitle123: 'Admin Products',
                 path123: '/admin/product-list'
             });
