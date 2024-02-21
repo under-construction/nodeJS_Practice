@@ -5,7 +5,7 @@ const rootDir = require('./util/path');
 
 const notFound404Controller = require('./controllers/404');
 
-const db = require('./util/database');
+const sequelize = require('./util/database');
 
 const app = express();
 
@@ -23,4 +23,9 @@ app.use(shopRoutes);
 
 app.use(notFound404Controller.notFound404);
 
-const server = app.listen(3080);
+sequelize.sync()
+    .then(res => {
+        // console.log(res);
+        const server = app.listen(3080);
+    })
+    .catch(err => console.log(err));
