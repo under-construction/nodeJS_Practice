@@ -42,11 +42,8 @@ module.exports = class Product {
         return getProductsFromDB();
     }
 
-    static getById(id, cb) {
-        getProductsFromFile(products => {
-            const product = products.find(p => p.id === id);
-            cb(product);
-        });
+    static getById(id) {
+        return db.execute('SELECT * FROM products WHERE products.id = ?', [id]);
     }
 
     static remove(id, cb) {
