@@ -46,18 +46,7 @@ module.exports = class Product {
         return db.execute('SELECT * FROM products WHERE products.id = ?', [id]);
     }
 
-    static remove(id, cb) {
-        getProductsFromFile(products => {
-            const existingProduct = products.find(p => p.id === id);
-
-            if (existingProduct) {
-                products = products.filter(i => i.id !== id);
-                fs.writeFile(filePath, JSON.stringify(products), err => {
-                    if (!err) {
-                        Cart.clearProduct(id, existingProduct.price, cb);
-                    }
-                });
-            }
-        });
+    static remove(id) {
+        return db.execute('DELETE FROM products WHERE products.id = ?', [id])
     }
 }
