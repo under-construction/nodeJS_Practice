@@ -1,5 +1,4 @@
 const Product = require('../models/product');
-const productModel = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
     console.log('In middleware for add product (admin.js)');
@@ -22,7 +21,9 @@ exports.postAddProduct = (req, res, next) => {
         description: description,
         price: price
     })
-        .then(res => console.log('Product has been created.'))
+        .then(() => {
+            res.redirect('/admin123/product-list123');
+        })
         .catch(err => console.log(err));
 }
 
@@ -85,7 +86,9 @@ exports.getProducts = (req, res, next) => {
 }
 
 exports.deleteProduct = (req, res, next) => {
-    Product.remove(req.params.productId123)
-        .then(res.redirect('/'))
+    Product.destroy({ where: { id: req.params.productId123 } })
+        .then(() => {
+            res.redirect('/admin123/product-list123');
+        })
         .catch(err => console.log(err));
 }
