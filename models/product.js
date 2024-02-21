@@ -29,21 +29,9 @@ module.exports = class Product {
     }
 
     save() {
-        getProductsFromFile(products => {
-            if (this.id) {
-                const existingProductIndex = products.findIndex(p => p.id === this.id);
-                const updatedProducts = [...products];
-                updatedProducts[existingProductIndex] = this;
-                fs.writeFile(filePath, JSON.stringify(updatedProducts), err => {
-                    console.log(err);
-                });
-            }
-            else {
-                this.id = Math.random().toString();
-                products.push(this);
-                fs.writeFile(filePath, JSON.stringify(products), err => console.log(err));
-            }
-        });
+        return db.execute('INSERT INTO products (title, price, imageUrl, description) VALUES (?, ?, ?, ?)',
+            [this.title, this.price, this.imageUrl, this.description]
+        );
     }
 
     static fetchAll(cb) {
