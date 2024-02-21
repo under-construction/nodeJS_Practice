@@ -35,7 +35,7 @@ exports.getEditProduct = (req, res, next) => {
 
     const productId = req.params.productId123;
 
-    Product.getById(productId, product => {
+    Product.findByPk(productId, product => {
         if (!product) {
             res.render('/');
         }
