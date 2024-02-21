@@ -35,17 +35,19 @@ exports.getEditProduct = (req, res, next) => {
 
     const productId = req.params.productId123;
 
-    Product.findByPk(productId, product => {
-        if (!product) {
-            res.render('/');
-        }
-        res.render('admin123/edit-product', {
-            path123: '/admin/edit-product',
-            pageTitle123: 'Edit Product',
-            editing: true,
-            product: product
-        });
-    });
+    Product.findByPk(productId)
+        .then(product => {
+            if (!product) {
+                res.redirect('/');
+            }
+            res.render('admin123/edit-product', {
+                path123: '/admin/edit-product',
+                pageTitle123: 'Edit Product',
+                editing: true,
+                product: product
+            });
+        })
+        .catch(err => console.log(err))
 }
 
 exports.postEditProduct = (req, res, next) => {
@@ -56,10 +58,18 @@ exports.postEditProduct = (req, res, next) => {
     const updatedPrice = req.body.price;
     const updatedDesc = req.body.description;
 
-    const updatedProduct = new Product(prodId, updatedTitle, updatedImageURL, updatedDesc, updatedPrice);
-    updatedProduct.save();
-
-    res.redirect('/');
+    Product.findByPk(prodId)
+        .then(product => {
+            product.title = updatedTitle;
+            product.imageUrl = updatedImageURL;
+            product.price = updatedPrice;
+            product.description = updatedDesc;
+            return product.save(); // return IS IMPORTANT HERE SINCE IT MUST RETURN A VALUE TO THE NEXT then BLOCK
+        })
+        .then(() => {
+            res.redirect('/admin123/product-list123') // ANOTHER then BLOCK MAKING SURE THAT redirect OPERATION IS DONE ONLY AFTER THE PRODUCT WAS SAVED (PREVIOUS then BLOCK)
+        })
+        .catch(err => console.log(err))
 }
 
 exports.getProducts = (req, res, next) => {
