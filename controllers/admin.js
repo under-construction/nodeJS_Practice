@@ -59,15 +59,19 @@ exports.postEditProduct = (req, res, next) => {
 }
 
 exports.getProducts = (req, res, next) => {
-    productModel.fetchAll(products => {
-        res.render('admin123/admin-product-list', {
-            prods: products,
-            pageTitle123: 'Admin Products',
-            path123: '/admin/product-list'
-        });
-    });
+    productModel.fetchAllDB()
+        .then(([a, b]) => {
+            res.render('admin123/admin-product-list', {
+                prods: a,
+                pageTitle123: 'Admin Products',
+                path123: '/admin/product-list'
+            });
+        })
+        .catch(err => console.log(err));
 }
 
 exports.deleteProduct = (req, res, next) => {
-    Product.remove(req.params.productId123, () => res.redirect('/'));
+    Product.remove(req.params.productId123)
+        .then(res.redirect('/'))
+        .catch(err => console.log(err));
 }
