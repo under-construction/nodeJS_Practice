@@ -23,7 +23,9 @@ const User = require('./models/user');
 app.use((req, res, next) => {
     User.findByPk(1)
         .then(user => {
+            // ANYTHING CAN BE ATTACHED TO ANY REQUEST VIA MIDDLEWARES FOR FURTHER USE ANYWHERE.
             req.user = user;
+            req.x = 1;
             next();
         })
         .catch(err => console.log(err));
@@ -48,7 +50,7 @@ sequelize.sync()
         return user;
     })
     .then(user => {
-        console.log(user);
+        // console.log(user);
         app.listen(3080);
     })
     .catch(err => console.log(err));

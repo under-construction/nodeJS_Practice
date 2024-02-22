@@ -19,7 +19,8 @@ exports.postAddProduct = (req, res, next) => {
         title: title,
         imageUrl: imageUrl,
         description: description,
-        price: price
+        price: price,
+        userId: req.user.id // USE THE PRE-ATTACHED user ELEMENT OF req
     })
         .then(() => {
             res.redirect('/admin123/product-list123');
