@@ -15,12 +15,11 @@ exports.postAddProduct = (req, res, next) => {
     const description = req.body.description;
     const price = req.body.price;
 
-    Product.create({
+    req.user.createProduct({
         title: title,
         imageUrl: imageUrl,
         description: description,
-        price: price,
-        userId: req.user.id // USE THE PRE-ATTACHED user ELEMENT OF req
+        price: price
     })
         .then(() => {
             res.redirect('/admin123/product-list123');
