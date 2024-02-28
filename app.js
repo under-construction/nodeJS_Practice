@@ -20,6 +20,7 @@ const shopRoutes = require('./routes/shop');
 const Product = require('./models/product');
 const User = require('./models/user');
 const Cart = require('./models/cart');
+const CartItem = require('./models/cart-item');
 
 app.use((req, res, next) => {
     User.findByPk(1)
@@ -43,8 +44,8 @@ User.hasMany(Product);
 User.hasOne(Cart);
 Cart.belongsTo(User);
 
-Product.belongsToMany(Cart, { through: 'cartItem' });
-Cart.belongsToMany(Product, { through: 'cartItem' });
+Product.belongsToMany(Cart, { through: CartItem });
+Cart.belongsToMany(Product, { through: CartItem });
 
 sequelize.sync()
     .then(res => {
