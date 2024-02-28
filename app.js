@@ -57,7 +57,9 @@ sequelize.sync()
         return user;
     })
     .then(user => {
-        // console.log(user);
+        return user.createCart();
+    })
+    .then(() => {
         app.listen(3080);
     })
     .catch(err => console.log(err));
