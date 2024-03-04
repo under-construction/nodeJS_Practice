@@ -47,6 +47,8 @@ Cart.belongsTo(User);
 Product.belongsToMany(Cart, { through: CartItem });
 Cart.belongsToMany(Product, { through: CartItem });
 
+let beginningUserId;
+
 sequelize.sync()
     .then(res => {
         return User.findByPk(1);
@@ -58,7 +60,13 @@ sequelize.sync()
         return user;
     })
     .then(user => {
-        return user.createCart();
+        beginningUserId = user.id;
+        return Cart.findByPk(user.id);
+    })
+    .then(cart => {
+        if (!cart) {
+            return Cart.create({ userId: beginningUserId });
+        }
     })
     .then(() => {
         app.listen(3080);
