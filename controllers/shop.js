@@ -26,15 +26,18 @@ exports.getIndex = (req, res, next) => {
 }
 
 exports.getCart = (req, res, next) => {
+    let cartTotalPrice;
     req.user.getCart()
         .then(cart => {
+            cartTotalPrice = cart.totalPrice;
             return cart.getProducts();
         })
         .then(products => {
             res.render('shop123/cart', {
                 path123: '/cart',
                 pageTitle123: 'Your Cart',
-                cartItems: products
+                cartItems: products,
+                totalPrice: cartTotalPrice
             });
         })
         .catch(err => console.log(err));
@@ -43,13 +46,14 @@ exports.getCart = (req, res, next) => {
 exports.postCart = (req, res, next) => {
     const retrievedProdId = req.body.productId123;
     let fetchedCart;
+    let product;
+    let innerProduct;
     req.user.getCart()
         .then(cart => {
             fetchedCart = cart;
             return cart.getProducts({ where: { id: retrievedProdId } });
         })
         .then(products => {
-            let product;
             if (products.length > 0) {
                 product = products[0];
             }
@@ -59,9 +63,21 @@ exports.postCart = (req, res, next) => {
             }
             return Product.findByPk(retrievedProdId)
                 .then(product => {
+                    innerProduct = product;
                     return fetchedCart.addProduct(product, {
                         through: { quantity: newQuantity }
                     });
+                })
+                .then(data => {
+                    return fetchedCart.update({
+                        totalPrice: fetchedCart.totalPrice + innerProduct.price
+                    })
+                        .then(data => {
+                            console.log(data);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
                 })
                 .catch(err => console.log(err));
         })

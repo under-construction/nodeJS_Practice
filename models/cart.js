@@ -8,6 +8,10 @@ const Cart = sequelize.define('cart', {
         autoIncrement: true,
         allowNull: false,
         primaryKey: true
+    },
+    totalPrice: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
     }
 });
 

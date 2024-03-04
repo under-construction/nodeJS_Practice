@@ -10,7 +10,7 @@
                 <h2>Product Name: <%= product.title %></h2>
                 <h2>Product ID: <%= product.id %></h2>
                 <h2>Price: <%= product.price %></h2>
-                <h2>Quantity: <%= product.quantity %></h2>
+                <h2>Quantity: <%= product.cartItem.quantity %></h2>
                 <form action="/delete-product" method="post">
                     <input type="hidden" name="productId123" value="<%= product.id %>">
                     <input type="hidden" name="productPrice123" value="<%= product.price %>">
@@ -18,7 +18,7 @@
                 </form>
                 <hr>
             <% } %>
-            <h2>Total Price: <%= cart.totalPrice %></h2>
+            <h2>Total Price: <%= totalPrice %></h2>
             <a href="/clearCart" class="btn">Clear Cart</a>
         <% } else { %>
             <h1>No products in cart! Add one now!</h1>
