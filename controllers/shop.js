@@ -47,7 +47,9 @@ exports.postCart = (req, res, next) => {
     const retrievedProdId = req.body.productId123;
     let fetchedCart;
     let product;
-    let innerProduct;
+    let innerProductPrice;
+    let newQuantity;
+
     req.user.getCart()
         .then(cart => {
             fetchedCart = cart;
@@ -57,32 +59,28 @@ exports.postCart = (req, res, next) => {
             if (products.length > 0) {
                 product = products[0];
             }
-            let newQuantity = 1;
+
             if (product) {
-                // fetchedCart
+                newQuantity = product.cartItem.quantity + 1;
             }
-            return Product.findByPk(retrievedProdId)
-                .then(product => {
-                    innerProduct = product;
-                    return fetchedCart.addProduct(product, {
-                        through: { quantity: newQuantity }
-                    });
-                })
-                .then(data => {
-                    return fetchedCart.update({
-                        totalPrice: fetchedCart.totalPrice + innerProduct.price
-                    })
-                        .then(data => {
-                            console.log(data);
-                        })
-                        .catch(err => {
-                            console.log(err);
-                        });
-                })
-                .catch(err => console.log(err));
+            else {
+                newQuantity = 1;
+            }
+
+            return Product.findByPk(retrievedProdId);
+        })
+        .then(product => {
+            innerProductPrice = product.price;
+
+            return fetchedCart.addProduct(product, { through: { quantity: newQuantity } });
         })
         .then(() => {
-            res.redirect('/');
+            return fetchedCart.update({
+                totalPrice: fetchedCart.totalPrice + innerProductPrice
+            });
+        })
+        .then(() => {
+            res.redirect('/cart');
         })
         .catch(err => console.log(err));
 }
