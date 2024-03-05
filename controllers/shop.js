@@ -59,7 +59,16 @@ exports.postCart = (req, res, next) => {
             }
             let newQuantity = 1;
             if (product) {
-                // fetchedCart
+                console.log(products);
+                return product.cartItem.update({
+                    quantity: product.cartItem.quantity + 1
+                })
+                    .then(data => {
+                        return fetchedCart.update({
+                            totalPrice: fetchedCart.totalPrice + product.price
+                        })
+                    })
+                    .catch(err => console.log(err));
             }
             return Product.findByPk(retrievedProdId)
                 .then(product => {
@@ -72,6 +81,7 @@ exports.postCart = (req, res, next) => {
                     return fetchedCart.update({
                         totalPrice: fetchedCart.totalPrice + innerProduct.price
                     })
+                        // TO BE DELETED
                         .then(data => {
                             console.log(data);
                         })
@@ -82,7 +92,7 @@ exports.postCart = (req, res, next) => {
                 .catch(err => console.log(err));
         })
         .then(() => {
-            res.redirect('/');
+            res.redirect('/cart');
         })
         .catch(err => console.log(err));
 }
