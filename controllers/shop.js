@@ -126,9 +126,36 @@ exports.getProductDetail = (req, res, next) => {
 
 exports.deleteProductFromCart = (req, res, next) => {
     const productId = req.body.productId123;
-    Product.getById(productId)
-        .then(([product]) => {
-            Cart.deleteProduct(productId, product[0].price, () => res.redirect('/cart'));
+
+    let userCart;
+    let retrievedProduct;
+
+    req.user.getCart()
+        .then(cart => {
+            userCart = cart;
+            return cart.getProducts({ where: { id: productId } });
+        })
+        .then(products => {
+            retrievedProduct = products[0];
+            if (retrievedProduct.cartItem.quantity == 1) {
+                return retrievedProduct.cartItem.destroy();
+            }
+            else {
+                return retrievedProduct.cartItem.update({
+                    quantity: retrievedProduct.cartItem.quantity - 1
+                });
+            }
+        })
+        .then(() => {
+            return userCart.update({
+                totalPrice: userCart.totalPrice - retrievedProduct.price
+            });
+        })
+        .then(() => {
+            res.redirect('/cart');
+        })
+        .catch(err => {
+            console.log(err);
         });
 }
 
