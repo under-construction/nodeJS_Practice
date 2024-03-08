@@ -19,6 +19,8 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const Product = require('./models/product');
 const User = require('./models/user');
+const Cart = require('./models/cart');
+const CartItem = require('./models/cart-item');
 
 app.use((req, res, next) => {
     User.findByPk(1)
@@ -39,6 +41,14 @@ app.use(notFound404Controller.notFound404);
 Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
 User.hasMany(Product);
 
+User.hasOne(Cart);
+Cart.belongsTo(User);
+
+Product.belongsToMany(Cart, { through: CartItem });
+Cart.belongsToMany(Product, { through: CartItem });
+
+let beginningUserId;
+
 sequelize.sync()
     .then(res => {
         return User.findByPk(1);
@@ -50,7 +60,15 @@ sequelize.sync()
         return user;
     })
     .then(user => {
-        // console.log(user);
+        beginningUserId = user.id;
+        return Cart.findByPk(user.id);
+    })
+    .then(cart => {
+        if (!cart) {
+            return Cart.create({ userId: beginningUserId });
+        }
+    })
+    .then(() => {
         app.listen(3080);
     })
     .catch(err => console.log(err));
