@@ -1,4 +1,5 @@
 const Cart = require('../models/cart');
+const CartItem = require('../models/cart-item');
 const Product = require('../models/product');
 
 exports.getProducts = (req, res, next) => {
@@ -160,5 +161,21 @@ exports.deleteProductFromCart = (req, res, next) => {
 }
 
 exports.clearCart = (req, res, next) => {
-    Cart.clearCart(() => res.redirect('/cart'));
+    CartItem.destroy({
+        truncate: true
+    })
+        .then(() => {
+            return req.user.getCart();
+        })
+        .then(cart => {
+            return cart.update({
+                totalPrice: 0
+            })
+        })
+        .then(() => {
+            res.redirect('/cart');
+        })
+        .catch(err => {
+            console.log(err);
+        });
 }
