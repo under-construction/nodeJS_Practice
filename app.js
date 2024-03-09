@@ -7,6 +7,11 @@ const notFound404Controller = require('./controllers/404');
 
 const sequelize = require('./util/database');
 
+const PORT = 3080;
+
+const syncFORCE = false;
+const syncALTER = false;
+
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -21,6 +26,8 @@ const Product = require('./models/product');
 const User = require('./models/user');
 const Cart = require('./models/cart');
 const CartItem = require('./models/cart-item');
+const Order = require('./models/order');
+const OrderItem = require('./models/order-item');
 
 app.use((req, res, next) => {
     User.findByPk(1)
@@ -28,6 +35,9 @@ app.use((req, res, next) => {
             // ANYTHING CAN BE ATTACHED TO ANY REQUEST VIA MIDDLEWARES FOR FURTHER USE ANYWHERE.
             req.user = user;
             req.x = 1;
+        })
+        .then(() => {
+            console.log('*****************');
             next();
         })
         .catch(err => console.log(err));
@@ -47,9 +57,15 @@ Cart.belongsTo(User);
 Product.belongsToMany(Cart, { through: CartItem });
 Cart.belongsToMany(Product, { through: CartItem });
 
+Order.belongsTo(User);
+User.hasMany(Order);
+
+Order.belongsToMany(Product, { through: OrderItem });
+Product.belongsToMany(Order, { through: OrderItem });
+
 let beginningUserId;
 
-sequelize.sync()
+sequelize.sync({ force: syncFORCE, alter: syncALTER })
     .then(res => {
         return User.findByPk(1);
     })
@@ -69,6 +85,10 @@ sequelize.sync()
         }
     })
     .then(() => {
-        app.listen(3080);
+        console.log("*****************************");
+        console.log(`*************ALL SET. THE SERVER IS LISTENING ON PORT ${PORT}.*****************`);
+    })
+    .then(() => {
+        app.listen(PORT);
     })
     .catch(err => console.log(err));
