@@ -94,10 +94,17 @@ exports.getCheckOut = (req, res, next) => {
 }
 
 exports.getOrders = (req, res, next) => {
-    res.render('shop123/orders', {
-        path123: '/orders',
-        pageTitle123: 'Orders'
-    })
+    req.user.getOrders({ include: Product })
+        .then(orders => {
+            res.render('shop123/orders', {
+                path123: '/orders',
+                pageTitle123: 'Orders',
+                orders: orders
+            });
+        })
+        .catch(err => {
+            console.log(err);
+        })
 }
 
 exports.postOrder = (req, res, next) => {
