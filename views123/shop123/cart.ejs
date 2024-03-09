@@ -19,7 +19,14 @@
                 <hr>
             <% } %>
             <h2>Total Price: <%= totalPrice %></h2>
-            <a href="/clearCart" class="btn">Clear Cart</a>
+            <div>
+                <a href="/clearCart" class="btn">Clear Cart</a>
+            </div>
+            <div style="margin: 1rem 0">
+                <form action="/create-order" method="POST">
+                    <button type="submit" class="btn">Order Now!</button>
+                </form>
+            </div>
         <% } else { %>
             <h1>No products in cart! Add one now!</h1>
             <h2>Total Price: 0</h2>

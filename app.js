@@ -9,6 +9,9 @@ const sequelize = require('./util/database');
 
 const PORT = 3080;
 
+const syncFORCE = false;
+const syncALTER = false;
+
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -32,6 +35,9 @@ app.use((req, res, next) => {
             // ANYTHING CAN BE ATTACHED TO ANY REQUEST VIA MIDDLEWARES FOR FURTHER USE ANYWHERE.
             req.user = user;
             req.x = 1;
+        })
+        .then(() => {
+            console.log('*****************');
             next();
         })
         .catch(err => console.log(err));
@@ -59,7 +65,7 @@ Product.belongsToMany(Order, { through: OrderItem });
 
 let beginningUserId;
 
-sequelize.sync()
+sequelize.sync({ force: syncFORCE, alter: syncALTER })
     .then(res => {
         return User.findByPk(1);
     })
