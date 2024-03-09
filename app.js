@@ -7,6 +7,8 @@ const notFound404Controller = require('./controllers/404');
 
 const sequelize = require('./util/database');
 
+const PORT = 3080;
+
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -21,6 +23,8 @@ const Product = require('./models/product');
 const User = require('./models/user');
 const Cart = require('./models/cart');
 const CartItem = require('./models/cart-item');
+const Order = require('./models/order');
+const OrderItem = require('./models/order-item');
 
 app.use((req, res, next) => {
     User.findByPk(1)
@@ -47,6 +51,12 @@ Cart.belongsTo(User);
 Product.belongsToMany(Cart, { through: CartItem });
 Cart.belongsToMany(Product, { through: CartItem });
 
+Order.belongsTo(User);
+User.hasMany(Order);
+
+Order.belongsToMany(Product, { through: OrderItem });
+Product.belongsToMany(Order, { through: OrderItem });
+
 let beginningUserId;
 
 sequelize.sync()
@@ -69,6 +79,10 @@ sequelize.sync()
         }
     })
     .then(() => {
-        app.listen(3080);
+        console.log("*****************************");
+        console.log(`*************ALL SET. THE SERVER IS LISTENING ON PORT ${PORT}.*****************`);
+    })
+    .then(() => {
+        app.listen(PORT);
     })
     .catch(err => console.log(err));
