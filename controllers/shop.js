@@ -28,7 +28,7 @@ exports.getIndex = (req, res, next) => {
 
 exports.getCart = (req, res, next) => {
     let cartTotalPrice;
-    req.user.getCart()
+    req.user.getCart() // eager loading with { include: Product } as parameter to getCart method
         .then(cart => {
             cartTotalPrice = cart.totalPrice;
             return cart.getProducts();
