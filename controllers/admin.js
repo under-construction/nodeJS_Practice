@@ -1,5 +1,4 @@
 const Product = require('../models/product');
-const productModel = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
     console.log('In middleware for add product (admin.js)');
@@ -16,10 +15,16 @@ exports.postAddProduct = (req, res, next) => {
     const description = req.body.description;
     const price = req.body.price;
 
-    const product = new productModel(null, title, imageUrl, description, price);
-    product.save()
-        .then(() => res.redirect('/'))
-        .catch(err => console.log(err))
+    req.user.createProduct({
+        title: title,
+        imageUrl: imageUrl,
+        description: description,
+        price: price
+    })
+        .then(() => {
+            res.redirect('/admin123/product-list123');
+        })
+        .catch(err => console.log(err));
 }
 
 exports.getEditProduct = (req, res, next) => {
@@ -31,17 +36,20 @@ exports.getEditProduct = (req, res, next) => {
 
     const productId = req.params.productId123;
 
-    Product.getById(productId, product => {
-        if (!product) {
-            res.render('/');
-        }
-        res.render('admin123/edit-product', {
-            path123: '/admin/edit-product',
-            pageTitle123: 'Edit Product',
-            editing: true,
-            product: product
-        });
-    });
+    req.user.getProducts({ where: { id: productId } })
+        .then(products => {
+            const product = products[0];
+            if (!product) {
+                res.redirect('/');
+            }
+            res.render('admin123/edit-product', {
+                path123: '/admin/edit-product',
+                pageTitle123: 'Edit Product',
+                editing: true,
+                product: product
+            });
+        })
+        .catch(err => console.log(err))
 }
 
 exports.postEditProduct = (req, res, next) => {
@@ -52,17 +60,25 @@ exports.postEditProduct = (req, res, next) => {
     const updatedPrice = req.body.price;
     const updatedDesc = req.body.description;
 
-    const updatedProduct = new Product(prodId, updatedTitle, updatedImageURL, updatedDesc, updatedPrice);
-    updatedProduct.save();
-
-    res.redirect('/');
+    req.user.getProducts({ where: { id: prodId } })
+        .then(product => {
+            product.title = updatedTitle;
+            product.imageUrl = updatedImageURL;
+            product.price = updatedPrice;
+            product.description = updatedDesc;
+            return product.save(); // return IS IMPORTANT HERE SINCE IT MUST RETURN A VALUE TO THE NEXT then BLOCK
+        })
+        .then(() => {
+            res.redirect('/admin123/product-list123') // ANOTHER then BLOCK MAKING SURE THAT redirect OPERATION IS DONE ONLY AFTER THE PRODUCT WAS SAVED (PREVIOUS then BLOCK)
+        })
+        .catch(err => console.log(err))
 }
 
 exports.getProducts = (req, res, next) => {
-    productModel.fetchAllDB()
-        .then(([a, b]) => {
+    req.user.getProducts()
+        .then(data => {
             res.render('admin123/admin-product-list', {
-                prods: a,
+                prods: data,
                 pageTitle123: 'Admin Products',
                 path123: '/admin/product-list'
             });
@@ -71,7 +87,9 @@ exports.getProducts = (req, res, next) => {
 }
 
 exports.deleteProduct = (req, res, next) => {
-    Product.remove(req.params.productId123)
-        .then(res.redirect('/'))
+    Product.destroy({ where: { id: req.params.productId123 } })
+        .then(() => {
+            res.redirect('/admin123/product-list123');
+        })
         .catch(err => console.log(err));
 }
