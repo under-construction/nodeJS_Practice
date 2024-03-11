@@ -1,8 +1,15 @@
-const { Sequelize } = require('sequelize');
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
 
-const sequelize = new Sequelize('nodejs_practice', 'root', '1234', {
-    dialect: 'mysql',
-    host: 'localhost'
-});
+const uri = 'mongodb+srv://sa:123@mongodbpractice123.zxtp6fe.mongodb.net/?retryWrites=true&w=majority&appName=mongoDBPractice123';
 
-module.exports = sequelize;
+const mongoConnect = cb => {
+    MongoClient.connect(uri)
+        .then(result => {
+            console.log('mongodb successfully connected...')
+            cb(result);
+        })
+        .catch(err => console.log(err));
+}
+
+module.exports = mongoConnect;
