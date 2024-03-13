@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 
 const notFound404Controller = require('./controllers/404');
-const mongoConnect = require('./util/database');
+const { mongoConnect } = require('./util/database');
 
 const PORT = 3080;
 
@@ -38,6 +38,5 @@ app.use((req, res, next) => {
 app.use(notFound404Controller.notFound404);
 
 mongoConnect(client => {
-    console.log(client);
     app.listen(PORT);
 });
