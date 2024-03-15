@@ -1,4 +1,5 @@
 const { getDB } = require('../util/database');
+const { ObjectId } = require('mongodb');
 
 class Product {
     constructor(title, price, description, imageUrl) {
@@ -31,6 +32,20 @@ class Product {
                 return products;
             })
             .catch(err => console.log(err));
+    }
+
+    static getById(id) {
+        const db = getDB();
+        return db
+            .collection('products')
+            .findOne({ _id: ObjectId.createFromHexString(id) })
+            .then(res => {
+                // console.log(res);
+                return res;
+            })
+            .catch(err => {
+                console.log(err);
+            });
     }
 }
 
