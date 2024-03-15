@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public1234')));
 
 const adminRoutes = require('./routes/admin');
-// const shopRoutes = require('./routes/shop');
+const shopRoutes = require('./routes/shop');
 
 app.use((req, res, next) => {
     // User.findByPk(1)
@@ -34,7 +34,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/admin123', adminRoutes);
-// app.use(shopRoutes);
+app.use(shopRoutes);
 
 app.use(notFound404Controller.notFound404);
 
