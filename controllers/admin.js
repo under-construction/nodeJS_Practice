@@ -71,22 +71,22 @@ exports.postAddProduct = (req, res, next) => {
 //         .catch(err => console.log(err))
 // }
 
-// exports.getProducts = (req, res, next) => {
-//     req.user.getProducts()
-//         .then(data => {
-//             res.render('admin123/admin-product-list', {
-//                 prods: data,
-//                 pageTitle123: 'Admin Products',
-//                 path123: '/admin/product-list'
-//             });
-//         })
-//         .catch(err => console.log(err));
-// }
+exports.getProducts = (req, res, next) => {
+    Product.fetchAll()
+        .then(data => {
+            res.render('admin123/admin-product-list', {
+                prods: data,
+                pageTitle123: 'Admin Products',
+                path123: '/admin/product-list'
+            });
+        })
+        .catch(err => console.log(err));
+}
 
-// exports.deleteProduct = (req, res, next) => {
-//     Product.destroy({ where: { id: req.params.productId123 } })
-//         .then(() => {
-//             res.redirect('/admin123/product-list123');
-//         })
-//         .catch(err => console.log(err));
-// }
+exports.deleteProduct = (req, res, next) => {
+    Product.delete(req.params.productId123)
+        .then(() => {
+            res.redirect('/admin123/product-list123');
+        })
+        .catch(err => console.log(err));
+}

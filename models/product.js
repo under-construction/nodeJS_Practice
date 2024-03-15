@@ -47,6 +47,20 @@ class Product {
                 console.log(err);
             });
     }
+
+    static delete(id) {
+        const db = getDB();
+        return db
+            .collection('products')
+            .deleteOne({ _id: ObjectId.createFromHexString(id) })
+            .then(res => {
+                // console.log(res);
+                return res;
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
 }
 
 module.exports = Product;
