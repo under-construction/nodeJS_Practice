@@ -7,7 +7,7 @@ class Product {
         this.price = price;
         this.description = description;
         this.imageUrl = imageUrl;
-        this._id = ObjectId.createFromHexString(id);
+        this._id = id ? ObjectId.createFromHexString(id) : 0;
     }
 
     save() {
