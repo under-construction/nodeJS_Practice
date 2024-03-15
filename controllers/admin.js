@@ -48,27 +48,31 @@ exports.getEditProduct = (req, res, next) => {
         .catch(err => console.log(err))
 }
 
-// exports.postEditProduct = (req, res, next) => {
-//     const prodId = req.body.prodId123;
+exports.postEditProduct = (req, res, next) => {
+    const prodId = req.body.prodId123;
 
-//     const updatedTitle = req.body.title;
-//     const updatedImageURL = req.body.imageUrl;
-//     const updatedPrice = req.body.price;
-//     const updatedDesc = req.body.description;
+    const updatedTitle = req.body.title;
+    const updatedImageURL = req.body.imageUrl;
+    const updatedPrice = req.body.price;
+    const updatedDesc = req.body.description;
 
-//     req.user.getProducts({ where: { id: prodId } })
-//         .then(product => {
-//             product.title = updatedTitle;
-//             product.imageUrl = updatedImageURL;
-//             product.price = updatedPrice;
-//             product.description = updatedDesc;
-//             return product.save(); // return IS IMPORTANT HERE SINCE IT MUST RETURN A VALUE TO THE NEXT then BLOCK
-//         })
-//         .then(() => {
-//             res.redirect('/admin123/product-list123') // ANOTHER then BLOCK MAKING SURE THAT redirect OPERATION IS DONE ONLY AFTER THE PRODUCT WAS SAVED (PREVIOUS then BLOCK)
-//         })
-//         .catch(err => console.log(err))
-// }
+    const product = new Product(
+        updatedTitle,
+        updatedPrice,
+        updatedDesc,
+        updatedImageURL,
+        prodId
+    );
+
+    product
+        .save()
+        .then(result => {
+            res.redirect('/admin123/product-list123')
+        })
+        .catch(err => {
+            console.log(err);
+        });
+}
 
 exports.getProducts = (req, res, next) => {
     Product.fetchAll()
