@@ -24,30 +24,29 @@ exports.postAddProduct = (req, res, next) => {
         .catch(err => console.log(err));
 }
 
-// exports.getEditProduct = (req, res, next) => {
-//     const editMode = req.query.edit123;
+exports.getEditProduct = (req, res, next) => {
+    const editMode = req.query.edit123;
 
-//     if (!editMode) {
-//         return res.redirect('/');
-//     }
+    if (!editMode) {
+        return res.redirect('/');
+    }
 
-//     const productId = req.params.productId123;
+    const productId = req.params.productId123;
 
-//     req.user.getProducts({ where: { id: productId } })
-//         .then(products => {
-//             const product = products[0];
-//             if (!product) {
-//                 res.redirect('/');
-//             }
-//             res.render('admin123/edit-product', {
-//                 path123: '/admin/edit-product',
-//                 pageTitle123: 'Edit Product',
-//                 editing: true,
-//                 product: product
-//             });
-//         })
-//         .catch(err => console.log(err))
-// }
+    Product.getById(productId)
+        .then(product => {
+            if (!product) {
+                res.redirect('/');
+            }
+            res.render('admin123/edit-product', {
+                path123: '/admin/edit-product',
+                pageTitle123: 'Edit Product',
+                editing: true,
+                product: product
+            });
+        })
+        .catch(err => console.log(err))
+}
 
 // exports.postEditProduct = (req, res, next) => {
 //     const prodId = req.body.prodId123;
