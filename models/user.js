@@ -9,7 +9,7 @@ class User {
 
     save() {
         let db = getDB();
-        db
+        return db
             .collection('users')
             .insertOne(this)
             .then(result => {
@@ -22,7 +22,7 @@ class User {
 
     static getById(id) {
         let db = getDB();
-        db
+        return db
             .collection('users')
             .findOne({
                 _id: ObjectId.createFromHexString(id)
