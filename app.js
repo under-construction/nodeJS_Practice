@@ -20,7 +20,7 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
 app.use((req, res, next) => {
-    User.getById('65f967a36cf6f3be4dff10b7')
+    User.getById('65f99bd4f6142d4838219906')
         .then(user => {
             // ANYTHING CAN BE ATTACHED TO ANY REQUEST VIA MIDDLEWARES FOR FURTHER USE ANYWHERE.
             req.user = new User(user.name, user.email, user.cart, user._id);
