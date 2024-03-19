@@ -23,7 +23,7 @@ app.use((req, res, next) => {
     User.getById('65f967a36cf6f3be4dff10b7')
         .then(user => {
             // ANYTHING CAN BE ATTACHED TO ANY REQUEST VIA MIDDLEWARES FOR FURTHER USE ANYWHERE.
-            req.user = user;
+            req.user = new User(user.name, user.email, user.cart, user._id);
             req.x = 1;
         })
         .then(() => {

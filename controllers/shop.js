@@ -42,47 +42,17 @@ exports.getIndex = (req, res, next) => {
 //         .catch(err => console.log(err));
 // }
 
-// exports.postCart = (req, res, next) => {
-//     const retrievedProdId = req.body.productId123;
-//     let fetchedCart;
-//     let product;
-//     let innerProductPrice;
-//     let newQuantity;
+exports.postCart = (req, res, next) => {
+    const retrievedProdId = req.body.productId123;
 
-//     req.user.getCart()
-//         .then(cart => {
-//             fetchedCart = cart;
-//             return cart.getProducts({ where: { id: retrievedProdId } });
-//         })
-//         .then(products => {
-//             if (products.length > 0) {
-//                 product = products[0];
-//             }
-
-//             if (product) {
-//                 newQuantity = product.cartItem.quantity + 1;
-//             }
-//             else {
-//                 newQuantity = 1;
-//             }
-
-//             return Product.findByPk(retrievedProdId);
-//         })
-//         .then(product => {
-//             innerProductPrice = product.price;
-
-//             return fetchedCart.addProduct(product, { through: { quantity: newQuantity } });
-//         })
-//         .then(() => {
-//             return fetchedCart.update({
-//                 totalPrice: fetchedCart.totalPrice + innerProductPrice
-//             });
-//         })
-//         .then(() => {
-//             res.redirect('/cart');
-//         })
-//         .catch(err => console.log(err));
-// }
+    Product.getById(retrievedProdId)
+        .then(product => {
+            return req.user.addToCart(product);
+        })
+        .then(result => {
+            console.log(result);
+        });
+}
 
 // exports.getCheckOut = (req, res, next) => {
 //     res.render('shop123/checkout', {

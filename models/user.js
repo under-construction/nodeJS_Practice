@@ -2,10 +2,11 @@ const { getDB } = require('../util/database');
 const { ObjectId } = require('mongodb');
 
 class User {
-    constructor(name, email, cart) {
+    constructor(name, email, cart, id) {
         this.name = name;
         this.email = email;
         this.cart = cart;
+        this._id = id;
     }
 
     save() {
@@ -28,7 +29,7 @@ class User {
         return db
             .collection('users')
             .updateOne(
-                { _id: ObjectId.createFromHexString(this._id) },
+                { _id: this._id },
                 { $set: { cart: updatedCart } }
             );
     }
