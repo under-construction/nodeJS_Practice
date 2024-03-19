@@ -4,6 +4,7 @@ const path = require('path');
 
 const notFound404Controller = require('./controllers/404');
 const { mongoConnect } = require('./util/database');
+const User = require('./models/user');
 
 const PORT = 3080;
 
@@ -19,18 +20,18 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
 app.use((req, res, next) => {
-    // User.findByPk(1)
-    //     .then(user => {
-    //         // ANYTHING CAN BE ATTACHED TO ANY REQUEST VIA MIDDLEWARES FOR FURTHER USE ANYWHERE.
-    //         req.user = user;
-    //         req.x = 1;
-    //     })
-    //     .then(() => {
-    //         console.log('*****************');
-    //         next();
-    //     })
-    //     .catch(err => console.log(err));
-    next();
+    User.getById('65f967a36cf6f3be4dff10b7')
+        .then(user => {
+            // ANYTHING CAN BE ATTACHED TO ANY REQUEST VIA MIDDLEWARES FOR FURTHER USE ANYWHERE.
+            req.user = user;
+            req.x = 1;
+        })
+        .then(() => {
+            console.log('*****************');
+            next();
+        })
+        .catch(err => console.log(err));
+    // next();
 });
 
 app.use('/admin123', adminRoutes);
