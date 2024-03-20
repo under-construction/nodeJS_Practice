@@ -49,6 +49,34 @@ exports.postCart = (req, res, next) => {
         });
 }
 
+exports.deleteProductFromCart = (req, res, next) => {
+    const productId = req.body.productId123;
+
+    req.user.deleteProductFromCart(productId)
+        .then(result => {
+            res.redirect('/cart');
+        });
+}
+
+// exports.clearCart = (req, res, next) => {
+//     let fetchedCart;
+
+//     req.user.getCart()
+//         .then(cart => {
+//             fetchedCart = cart;
+//             return cart.setProducts(null);
+//         })
+//         .then(data => {
+//             fetchedCart.update({
+//                 totalPrice: 0
+//             });
+//         })
+//         .then(() => {
+//             res.redirect('/cart');
+//         })
+//         .catch(err => console.log(err));
+// }
+
 // exports.getCheckOut = (req, res, next) => {
 //     res.render('shop123/checkout', {
 //         path123: '/checkout',
@@ -111,57 +139,3 @@ exports.getProductDetail = (req, res, next) => {
         })
         .catch(err => console.log(err));
 }
-
-// exports.deleteProductFromCart = (req, res, next) => {
-//     const productId = req.body.productId123;
-
-//     let userCart;
-//     let retrievedProduct;
-
-//     req.user.getCart()
-//         .then(cart => {
-//             userCart = cart;
-//             return cart.getProducts({ where: { id: productId } });
-//         })
-//         .then(products => {
-//             retrievedProduct = products[0];
-//             if (retrievedProduct.cartItem.quantity == 1) {
-//                 return retrievedProduct.cartItem.destroy();
-//             }
-//             else {
-//                 return retrievedProduct.cartItem.update({
-//                     quantity: retrievedProduct.cartItem.quantity - 1
-//                 });
-//             }
-//         })
-//         .then(() => {
-//             return userCart.update({
-//                 totalPrice: userCart.totalPrice - retrievedProduct.price
-//             });
-//         })
-//         .then(() => {
-//             res.redirect('/cart');
-//         })
-//         .catch(err => {
-//             console.log(err);
-//         });
-// }
-
-// exports.clearCart = (req, res, next) => {
-//     let fetchedCart;
-
-//     req.user.getCart()
-//         .then(cart => {
-//             fetchedCart = cart;
-//             return cart.setProducts(null);
-//         })
-//         .then(data => {
-//             fetchedCart.update({
-//                 totalPrice: 0
-//             });
-//         })
-//         .then(() => {
-//             res.redirect('/cart');
-//         })
-//         .catch(err => console.log(err));
-// }
