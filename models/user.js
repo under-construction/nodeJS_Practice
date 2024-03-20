@@ -85,6 +85,53 @@ class User {
             });
     }
 
+    deleteProductFromCart(productId) {
+        const removedProductIndex = this.cart.items.findIndex(i => {
+            return i.productId.toString() === productId.toString();
+        });
+
+        let newQuantity = this.cart.items[removedProductIndex].quantity - 1;
+        let updatedCartItems = [...this.cart.items];
+        updatedCartItems[removedProductIndex].quantity = newQuantity;
+
+        if (newQuantity === 0) {
+            updatedCartItems = updatedCartItems.filter(i => {
+                return i.productId.toString() !== productId.toString();
+            });
+
+        }
+
+        const db = getDB();
+
+        return db
+            .collection('products')
+            .findOne(
+                {
+                    _id: ObjectId.createFromHexString(productId)
+                },
+                {
+                    projection: {
+                        price: 1
+                    }
+                }
+            )
+            .then(product => {
+                let updatedCartTotalPrice = this.cart.totalPrice - product.price;
+
+                const updatedCart = {
+                    items: updatedCartItems,
+                    totalPrice: updatedCartTotalPrice
+                }
+
+                return db
+                    .collection('users')
+                    .updateOne(
+                        { _id: this._id },
+                        { $set: { cart: updatedCart } }
+                    );
+            })
+    }
+
     static getById(id) {
         let db = getDB();
         return db
