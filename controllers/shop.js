@@ -24,23 +24,18 @@ exports.getIndex = (req, res, next) => {
         .catch(err => console.log(err));
 }
 
-// exports.getCart = (req, res, next) => {
-//     let cartTotalPrice;
-//     req.user.getCart() // eager loading with { include: Product } as parameter to getCart method
-//         .then(cart => {
-//             cartTotalPrice = cart.totalPrice;
-//             return cart.getProducts();
-//         })
-//         .then(products => {
-//             res.render('shop123/cart', {
-//                 path123: '/cart',
-//                 pageTitle123: 'Your Cart',
-//                 cartItems: products,
-//                 totalPrice: cartTotalPrice
-//             });
-//         })
-//         .catch(err => console.log(err));
-// }
+exports.getCart = (req, res, next) => {
+    let cartTotalPrice;
+    req.user.getCart()
+        .then(products => {
+            res.render('shop123/cart', {
+                path123: '/cart',
+                pageTitle123: 'Your Cart',
+                cartItems: products
+            });
+        })
+        .catch(err => console.log(err));
+}
 
 exports.postCart = (req, res, next) => {
     const retrievedProdId = req.body.productId123;
