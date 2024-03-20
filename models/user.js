@@ -23,6 +23,13 @@ class User {
     }
 
     addToCart(product) {
+        if (!this.cart) {
+            this.cart = {
+                items: [],
+                totalPrice: 0
+            };
+        }
+
         const cartProductIndex = this.cart.items.findIndex(cp => {
             return cp.productId.toString() === product._id.toString();
         });
@@ -36,9 +43,15 @@ class User {
             updatedCartItems.push({
                 productId: product._id,
                 quantity: newQuantity
-            })
+            });
         }
-        const updatedCart = { items: updatedCartItems };
+
+        this.cart.totalPrice += (+product.price);
+
+        const updatedCart = {
+            items: updatedCartItems,
+            totalPrice: this.cart.totalPrice
+        };
 
         const db = getDB();
         return db
@@ -47,6 +60,29 @@ class User {
                 { _id: this._id },
                 { $set: { cart: updatedCart } }
             );
+    }
+
+    getCart() {
+        const db = getDB();
+        const productIDs = this.cart.items.map(i => i.productId);
+        const totalPrice = this.cart.totalPrice;
+        return db
+            .collection('products')
+            .find({ _id: { $in: productIDs } })
+            .toArray()
+            .then(products => {
+                return {
+                    products: products.map(p => {
+                        return {
+                            ...p,
+                            quantity: this.cart.items.find(i => {
+                                return i.productId.toString() === p._id.toString();
+                            }).quantity
+                        };
+                    }),
+                    totalPrice: totalPrice
+                };
+            });
     }
 
     static getById(id) {
