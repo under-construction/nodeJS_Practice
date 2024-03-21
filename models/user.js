@@ -132,6 +132,21 @@ class User {
             })
     }
 
+    clearCart() {
+        let emptyCart = {
+            items: [],
+            totalPrice: 0
+        }
+
+        const db = getDB();
+        return db
+            .collection('users')
+            .updateOne(
+                { _id: this._id },
+                { $set: { cart: emptyCart } }
+            );
+    }
+
     static getById(id) {
         let db = getDB();
         return db
