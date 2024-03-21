@@ -194,6 +194,52 @@ class User {
                 console.log(err);
             });
     }
+
+    isInCart(productId) {
+        return this.cart.items.find(i => i.productId.toString() === productId.toString());
+    }
+
+    removeDeletedProductFromCart(productId) {
+        const deletedProductIndex = this.cart.items.findIndex(i => {
+            return i.productId.toString() === productId.toString();
+        });
+
+        let productQuantity = this.cart.items[deletedProductIndex].quantity;
+
+        let updatedCartItems = [...this.cart.items];
+        updatedCartItems = updatedCartItems.filter(i => {
+            return i.productId.toString() !== productId.toString();
+        });
+
+        const db = getDB();
+        return db
+            .collection('products')
+            .findOne(
+                {
+                    _id: ObjectId.createFromHexString(productId)
+                },
+                {
+                    projection: {
+                        price: 1
+                    }
+                }
+            )
+            .then(product => {
+                let updatedCartTotalPrice = this.cart.totalPrice - productQuantity * product.price;
+
+                const updatedCart = {
+                    items: updatedCartItems,
+                    totalPrice: updatedCartTotalPrice
+                }
+
+                return db
+                    .collection('users')
+                    .updateOne(
+                        { _id: this._id },
+                        { $set: { cart: updatedCart } }
+                    );
+            });
+    }
 }
 
 module.exports = User;

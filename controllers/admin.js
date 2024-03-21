@@ -87,9 +87,23 @@ exports.getProducts = (req, res, next) => {
 }
 
 exports.deleteProduct = (req, res, next) => {
-    Product.delete(req.params.productId123)
-        .then(() => {
-            res.redirect('/admin123/product-list123');
-        })
-        .catch(err => console.log(err));
+    const isInCart = req.user.isInCart(req.params.productId123);
+
+    if (isInCart) {
+        return req.user.removeDeletedProductFromCart(req.params.productId123)
+            .then(result => {
+                return Product.delete(req.params.productId123)
+            })
+            .then(result => {
+                res.redirect('/admin123/product-list123');
+            })
+            .catch(err => console.log(err));
+    }
+    else {
+        return Product.delete(req.params.productId123)
+            .then(result => {
+                res.redirect('/admin123/product-list123');
+            })
+            .catch(err => console.log(err));
+    }
 }
