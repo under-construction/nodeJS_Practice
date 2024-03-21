@@ -58,24 +58,12 @@ exports.deleteProductFromCart = (req, res, next) => {
         });
 }
 
-// exports.clearCart = (req, res, next) => {
-//     let fetchedCart;
-
-//     req.user.getCart()
-//         .then(cart => {
-//             fetchedCart = cart;
-//             return cart.setProducts(null);
-//         })
-//         .then(data => {
-//             fetchedCart.update({
-//                 totalPrice: 0
-//             });
-//         })
-//         .then(() => {
-//             res.redirect('/cart');
-//         })
-//         .catch(err => console.log(err));
-// }
+exports.clearCart = (req, res, next) => {
+    req.user.clearCart()
+        .then(result => {
+            res.redirect('/cart');
+        })
+}
 
 // exports.getCheckOut = (req, res, next) => {
 //     res.render('shop123/checkout', {
