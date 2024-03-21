@@ -86,34 +86,15 @@ exports.clearCart = (req, res, next) => {
 //         })
 // }
 
-// exports.postOrder = (req, res, next) => {
-//     let retrievedProducts;
-
-//     req.user.getCart()
-//         .then(cart => {
-//             return cart.getProducts();
-//         })
-//         .then(products => {
-//             retrievedProducts = products;
-//             return req.user.createOrder();
-//         })
-//         .then(order => {
-//             return order.addProducts(
-//                 retrievedProducts.map(i => {
-//                     i.orderItem = { quantity: i.cartItem.quantity }
-//                     return i;
-//                 }));
-//         })
-//         .then(() => {
-//             return this.clearCart(req, res, next);
-//         })
-//         .then(() => {
-//             res.redirect('/');
-//         })
-//         .catch(err => {
-//             console.log(err);
-//         });
-// }
+exports.postOrder = (req, res, next) => {
+    req.user.addOrder()
+        .then(() => {
+            res.redirect('/');
+        })
+        .catch(err => {
+            console.log(err);
+        });
+}
 
 exports.getProductDetail = (req, res, next) => {
     const productId = req.params.productId123;
