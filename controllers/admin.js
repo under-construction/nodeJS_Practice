@@ -67,6 +67,9 @@ exports.postEditProduct = (req, res, next) => {
     product
         .save()
         .then(result => {
+            return req.user.calculateCartTotalPrice();
+        })
+        .then(result => {
             res.redirect('/admin123/product-list123')
         })
         .catch(err => {

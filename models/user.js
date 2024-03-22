@@ -240,6 +240,52 @@ class User {
                     );
             });
     }
+
+    calculateCartTotalPrice() {
+        let cartProductIds = this.cart.items.map(i => {
+            return {
+                productId: i.productId,
+                productQuantity: i.quantity
+            }
+        });
+
+        const db = getDB();
+        return db
+            .collection('products')
+            .find(
+                {
+                    _id: {
+                        $in: cartProductIds.map(i => i.productId)
+                    }
+                },
+                {
+                    projection: {
+                        _id: 0,
+                        price: 1
+                    }
+                }
+            )
+            .toArray()
+            .then(array => {
+                return cartProductIds.reduce((acc, curr) =>
+                    acc + curr.productQuantity * array[cartProductIds.indexOf(curr)].price
+                    , 0
+                );
+            })
+            .then(result => {
+                let updatedCart = {
+                    items: this.cart.items,
+                    totalPrice: result
+                }
+
+                return db
+                    .collection('users')
+                    .updateOne(
+                        { _id: this._id },
+                        { $set: { cart: updatedCart } }
+                    );
+            });
+    }
 }
 
 module.exports = User;
