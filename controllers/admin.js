@@ -1,7 +1,6 @@
 const Product = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
-    console.log('In middleware for add product (admin.js)');
     res.render('admin123/edit-product', {
         path123: '/admin/add-product',
         pageTitle123: 'Add Product',
@@ -15,13 +14,11 @@ exports.postAddProduct = (req, res, next) => {
     const description = req.body.description;
     const price = req.body.price;
 
-    req.user.createProduct({
-        title: title,
-        imageUrl: imageUrl,
-        description: description,
-        price: price
-    })
-        .then(() => {
+    const product = new Product(title, price, description, imageUrl, null, req.user._id);
+
+    product
+        .save()
+        .then(result => {
             res.redirect('/admin123/product-list123');
         })
         .catch(err => console.log(err));
@@ -36,9 +33,8 @@ exports.getEditProduct = (req, res, next) => {
 
     const productId = req.params.productId123;
 
-    req.user.getProducts({ where: { id: productId } })
-        .then(products => {
-            const product = products[0];
+    Product.getById(productId)
+        .then(product => {
             if (!product) {
                 res.redirect('/');
             }
@@ -60,22 +56,29 @@ exports.postEditProduct = (req, res, next) => {
     const updatedPrice = req.body.price;
     const updatedDesc = req.body.description;
 
-    req.user.getProducts({ where: { id: prodId } })
-        .then(product => {
-            product.title = updatedTitle;
-            product.imageUrl = updatedImageURL;
-            product.price = updatedPrice;
-            product.description = updatedDesc;
-            return product.save(); // return IS IMPORTANT HERE SINCE IT MUST RETURN A VALUE TO THE NEXT then BLOCK
+    const product = new Product(
+        updatedTitle,
+        updatedPrice,
+        updatedDesc,
+        updatedImageURL,
+        prodId
+    );
+
+    product
+        .save()
+        .then(result => {
+            return req.user.calculateCartTotalPrice();
         })
-        .then(() => {
-            res.redirect('/admin123/product-list123') // ANOTHER then BLOCK MAKING SURE THAT redirect OPERATION IS DONE ONLY AFTER THE PRODUCT WAS SAVED (PREVIOUS then BLOCK)
+        .then(result => {
+            res.redirect('/admin123/product-list123')
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+            console.log(err);
+        });
 }
 
 exports.getProducts = (req, res, next) => {
-    req.user.getProducts()
+    Product.fetchAll()
         .then(data => {
             res.render('admin123/admin-product-list', {
                 prods: data,
@@ -87,9 +90,23 @@ exports.getProducts = (req, res, next) => {
 }
 
 exports.deleteProduct = (req, res, next) => {
-    Product.destroy({ where: { id: req.params.productId123 } })
-        .then(() => {
-            res.redirect('/admin123/product-list123');
-        })
-        .catch(err => console.log(err));
+    const isInCart = req.user.isInCart(req.params.productId123);
+
+    if (isInCart) {
+        return req.user.removeDeletedProductFromCart(req.params.productId123)
+            .then(result => {
+                return Product.delete(req.params.productId123)
+            })
+            .then(result => {
+                res.redirect('/admin123/product-list123');
+            })
+            .catch(err => console.log(err));
+    }
+    else {
+        return Product.delete(req.params.productId123)
+            .then(result => {
+                res.redirect('/admin123/product-list123');
+            })
+            .catch(err => console.log(err));
+    }
 }
