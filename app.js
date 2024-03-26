@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 
 const notFound404Controller = require('./controllers/404');
-const { mongoConnect } = require('./util/database');
+const { run } = require('./util/database');
 const User = require('./models/user');
 
 const PORT = 3080;
@@ -25,10 +25,11 @@ app.use((req, res, next) => {
             // ANYTHING CAN BE ATTACHED TO ANY REQUEST VIA MIDDLEWARES FOR FURTHER USE ANYWHERE.
             req.user = new User(user.name, user.email, user.cart, user._id);
             req.x = 1;
+            next();
         })
         .then(() => {
             console.log('*****************');
-            next();
+            // next();
         })
         .catch(err => console.log(err));
     // next();
@@ -39,6 +40,10 @@ app.use(shopRoutes);
 
 app.use(notFound404Controller.notFound404);
 
-mongoConnect(() => {
-    app.listen(PORT);
-});
+// run(() => {
+//     app.listen(PORT);
+// });
+
+app.listen(PORT, () => {
+    run();
+})
