@@ -1,28 +1,30 @@
-// const Product = require('../models/product');
+const Product = require('../models/product');
 
-// exports.getAddProduct = (req, res, next) => {
-//     res.render('admin123/edit-product', {
-//         path123: '/admin/add-product',
-//         pageTitle123: 'Add Product',
-//         editing: false
-//     });
-// }
+exports.getAddProduct = (req, res, next) => {
+    res.render('admin123/edit-product', {
+        path123: '/admin/add-product',
+        pageTitle123: 'Add Product',
+        editing: false
+    });
+}
 
-// exports.postAddProduct = (req, res, next) => {
-//     const title = req.body.title;
-//     const imageUrl = req.body.imageUrl;
-//     const description = req.body.description;
-//     const price = req.body.price;
+exports.postAddProduct = async (req, res, next) => {
+    const product = new Product({
+        title: req.body.title,
+        price: req.body.price,
+        description: req.body.description,
+        imageUrl: req.body.imageUrl
+    });
 
-//     const product = new Product(title, price, description, imageUrl, null, req.user._id);
-
-//     product
-//         .save()
-//         .then(result => {
-//             res.redirect('/admin123/product-list123');
-//         })
-//         .catch(err => console.log(err));
-// }
+    try {
+        const saveResult = await product.save();
+        res.redirect('/');
+    } catch (err) {
+        console.error(err);
+    } finally {
+        console.log('product was successfully saved');
+    }
+}
 
 // exports.getEditProduct = (req, res, next) => {
 //     const editMode = req.query.edit123;

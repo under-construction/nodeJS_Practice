@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const schema = new mongoose.Schema({
+const productSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true
@@ -19,6 +19,9 @@ const schema = new mongoose.Schema({
     }
 });
 
+const Product = mongoose.model('Product', productSchema);
+
+module.exports = Product;
 
 // const { getDB } = require('../util/database');
 // const { ObjectId } = require('mongodb');

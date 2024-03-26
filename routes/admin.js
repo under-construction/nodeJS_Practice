@@ -6,9 +6,9 @@ const rootDir = require('../util/path');
 
 const adminController = require('../controllers/admin');
 
-// router.get('/add-product', adminController.getAddProduct);
+router.get('/add-product', adminController.getAddProduct);
 
-// router.post('/add-product1234', adminController.postAddProduct);
+router.post('/add-product1234', adminController.postAddProduct);
 
 // router.get('/product-list123', adminController.getProducts);
 

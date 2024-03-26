@@ -8,7 +8,7 @@ const { run } = require('./util/database');
 
 const PORT = 3080;
 
-const uri = 'mongodb+srv://sa:123@mongodbpractice123.zxtp6fe.mongodb.net/?retryWrites=true&w=majority&appName=mongoDBPractice123';
+const uri = 'mongodb+srv://sa:123@mongodbpractice123.zxtp6fe.mongodb.net/shopDatabase987?retryWrites=true&w=majority&appName=mongoDBPractice123';
 
 const app = express();
 
@@ -18,7 +18,7 @@ app.set('views', 'views123');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public1234')));
 
-// const adminRoutes = require('./routes/admin');
+const adminRoutes = require('./routes/admin');
 // const shopRoutes = require('./routes/shop');
 
 // app.use((req, res, next) => {
@@ -37,7 +37,7 @@ app.use(express.static(path.join(__dirname, 'public1234')));
 // next();
 // });
 
-// app.use('/admin123', adminRoutes);
+app.use('/admin123', adminRoutes);
 // app.use(shopRoutes);
 
 
@@ -48,10 +48,6 @@ app.use(express.static(path.join(__dirname, 'public1234')));
 // app.listen(PORT, () => {
 //     run();
 // })
-
-app.use('/', (req, res, next) => {
-    res.send('hello world!');
-})
 
 app.use(notFound404Controller.notFound404);
 
