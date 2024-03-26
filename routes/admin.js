@@ -6,16 +6,16 @@ const rootDir = require('../util/path');
 
 const adminController = require('../controllers/admin');
 
-router.get('/add-product', adminController.getAddProduct);
+// router.get('/add-product', adminController.getAddProduct);
 
-router.post('/add-product1234', adminController.postAddProduct);
+// router.post('/add-product1234', adminController.postAddProduct);
 
-router.get('/product-list123', adminController.getProducts);
+// router.get('/product-list123', adminController.getProducts);
 
-router.get('/edit-product/:productId123', adminController.getEditProduct);
+// router.get('/edit-product/:productId123', adminController.getEditProduct);
 
-router.post('/edit-product', adminController.postEditProduct);
+// router.post('/edit-product', adminController.postEditProduct);
 
-router.post('/delete-product123/:productId123', adminController.deleteProduct);
+// router.post('/delete-product123/:productId123', adminController.deleteProduct);
 
 module.exports = router;
