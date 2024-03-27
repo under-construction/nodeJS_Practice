@@ -1,28 +1,30 @@
-// const Product = require('../models/product');
+const Product = require('../models/product');
 
-// exports.getProducts = (req, res, next) => {
-//     Product.fetchAll()
-//         .then(data => {
-//             res.render('shop123/shop-product-list', {
-//                 prods: data,
-//                 pageTitle123: 'Shop123',
-//                 path123: '/products'
-//             });
-//         })
-//         .catch(err => console.log(err));
-// }
+exports.getProducts = async (req, res, next) => {
+    try {
+        const findResult = await Product.find();
+        res.render('shop123/shop-product-list', {
+            prods: findResult,
+            pageTitle123: 'Shop123',
+            path123: '/products'
+        });
+    } catch (err) {
+        console.error(err);
+    }
+}
 
-// exports.getIndex = (req, res, next) => {
-//     Product.fetchAll()
-//         .then(data => {
-//             res.render('shop123/index', {
-//                 prods: data,
-//                 pageTitle123: 'Shop123',
-//                 path123: '/shop'
-//             });
-//         })
-//         .catch(err => console.log(err));
-// }
+exports.getIndex = async (req, res, next) => {
+    try {
+        const findResult = await Product.find();
+        res.render('shop123/index', {
+            prods: findResult,
+            pageTitle123: 'Shop123',
+            path123: '/shop'
+        });
+    } catch (err) {
+        console.error(err);
+    }
+}
 
 // exports.getCart = (req, res, next) => {
 //     let cartTotalPrice;
@@ -96,15 +98,17 @@
 //         });
 // }
 
-// exports.getProductDetail = (req, res, next) => {
-//     const productId = req.params.productId123;
-//     Product.getById(productId)
-//         .then(product => {
-//             res.render('shop123/product-detail', {
-//                 path123: `/products`,
-//                 pageTitle123: `Product Detail: ${product.title}`,
-//                 product: product
-//             });
-//         })
-//         .catch(err => console.log(err));
-// }
+exports.getProductDetail = async (req, res, next) => {
+    const productId = req.params.productId123;
+
+    try {
+        const findResult = await Product.findById(productId);
+        res.render('shop123/product-detail', {
+            path123: `/products`,
+            pageTitle123: `Product Detail: ${findResult.title}`,
+            product: findResult
+        });
+    } catch (err) {
+        console.error(err);
+    }
+}
