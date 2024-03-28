@@ -14,7 +14,8 @@ const userSchema = new mongoose.Schema({
             {
                 productId: {
                     type: mongoose.Schema.Types.ObjectId,
-                    required: true
+                    required: true,
+                    ref: 'Person'
                 },
                 quantity: {
                     type: Number,
