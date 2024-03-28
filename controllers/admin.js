@@ -13,7 +13,8 @@ exports.postAddProduct = async (req, res, next) => {
         title: req.body.title,
         price: req.body.price,
         description: req.body.description,
-        imageUrl: req.body.imageUrl
+        imageUrl: req.body.imageUrl,
+        userId: req.user // mongoose will only pick up _id property here
     });
 
     try {
