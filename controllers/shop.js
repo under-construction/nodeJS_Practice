@@ -15,7 +15,10 @@ exports.getProducts = async (req, res, next) => {
 
 exports.getIndex = async (req, res, next) => {
     try {
-        const findResult = await Product.find();
+        const findResult = await Product.find()
+        // .select('title price -_id')
+        // .populate('userId', 'name');
+        console.log(findResult);
         res.render('shop123/index', {
             prods: findResult,
             pageTitle123: 'Shop123',
