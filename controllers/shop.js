@@ -17,8 +17,7 @@ exports.getIndex = async (req, res, next) => {
     try {
         const findResult = await Product.find()
         // .select('title price -_id')
-        // .populate('userId', 'name');
-        console.log(findResult);
+        // .populate('userId', 'name')
         res.render('shop123/index', {
             prods: findResult,
             pageTitle123: 'Shop123',
@@ -42,17 +41,19 @@ exports.getIndex = async (req, res, next) => {
 //         .catch(err => console.log(err));
 // }
 
-// exports.postCart = (req, res, next) => {
-//     const retrievedProdId = req.body.productId123;
+exports.postCart = async (req, res, next) => {
+    const retrievedProdId = req.body.productId123;
 
-//     Product.getById(retrievedProdId)
-//         .then(product => {
-//             return req.user.addToCart(product);
-//         })
-//         .then(result => {
-//             res.redirect('/cart');
-//         });
-// }
+    try {
+        const product = await Product.findById(retrievedProdId);
+        if (product) {
+            const addToCartResult = await req.user.addToCart(product);
+            res.redirect('/cart');
+        }
+    } catch (err) {
+        console.error(err);
+    }
+}
 
 // exports.deleteProductFromCart = (req, res, next) => {
 //     const productId = req.body.productId123;
