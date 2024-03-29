@@ -23,7 +23,7 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
 app.use((req, res, next) => {
-    User.findById('660583d77c6441080009cc8e')
+    User.findById('6606cc7783bd47644d4022ba')
         .then(user => {
             // ANYTHING CAN BE ATTACHED TO ANY REQUEST VIA MIDDLEWARES FOR FURTHER USE ANYWHERE.
             req.user = user;
@@ -59,7 +59,8 @@ async function main() {
             name: 'ercu',
             email: 'ercu@test.com',
             cart: {
-                items: []
+                items: [],
+                totalPrice: 0
             }
         });
         await user.save();
