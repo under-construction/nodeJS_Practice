@@ -67,4 +67,8 @@ userSchema.methods.addToCart = async function (product) {
     return await this.save();
 }
 
+userSchema.methods.getCart = async function () {
+    return this;
+}
+
 module.exports = mongoose.model('User', userSchema);
