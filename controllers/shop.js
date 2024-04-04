@@ -28,18 +28,25 @@ exports.getIndex = async (req, res, next) => {
     }
 }
 
-// exports.getCart = (req, res, next) => {
-//     let cartTotalPrice;
-//     req.user.getCart()
-//         .then(products => {
-//             res.render('shop123/cart', {
-//                 path123: '/cart',
-//                 pageTitle123: 'Your Cart',
-//                 cartItems: products
-//             });
-//         })
-//         .catch(err => console.log(err));
-// }
+exports.getCart = async (req, res, next) => {
+    try {
+        const user = await req.user;
+        // .populate('cart.items.productId');
+
+        // const getCartMth = await req.user.getCart();
+        // console.log(user);
+        // console.log(getCartMth);
+        // console.log(user === getCartMth); // PRINTS true
+
+        res.render('shop123/cart', {
+            path123: '/cart',
+            pageTitle123: 'Your Cart',
+            cartItems: user.cart.items
+        })
+    } catch (err) {
+        console.error(err);
+    }
+}
 
 exports.postCart = async (req, res, next) => {
     const retrievedProdId = req.body.productId123;

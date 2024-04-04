@@ -5,11 +5,11 @@
     <%- include('../includes123/navigation.ejs') %>
 
     <main>
-        <% if (cartItems.products.length > 0) { %>
-            <% for (let product of cartItems.products) { %>
-                <h2>Product Name: <%= product.title %></h2>
+        <% if (cartItems.length > 0) { %>
+            <% for (let product of cartItems) { %>
+                <h2>Product Name: <%= product.productId.title %></h2>
                 <h2>Product ID: <%= product._id %></h2>
-                <h2>Price: <%= product.price %></h2>
+                <h2>Price: <%= product.productId.price %></h2>
                 <h2>Quantity: <%= product.quantity %></h2>
                 <form action="/delete-product" method="post">
                     <input type="hidden" name="productId123" value="<%= product._id %>">
