@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
                 productId: {
                     type: mongoose.Schema.Types.ObjectId,
                     required: true,
-                    ref: 'Person'
+                    ref: 'Product'
                 },
                 quantity: {
                     type: Number,
@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-userSchema.methods.addToCart = function (product) {
+userSchema.methods.addToCart = async function (product) {
     if (!this.cart) {
         this.cart = {
             items: [],
@@ -64,7 +64,7 @@ userSchema.methods.addToCart = function (product) {
 
     this.cart = updatedCart;
 
-    return this.save();
+    return await this.save();
 }
 
 module.exports = mongoose.model('User', userSchema);
