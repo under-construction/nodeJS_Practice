@@ -5,20 +5,20 @@
     <%- include('../includes123/navigation.ejs') %>
 
     <main>
-        <% if (cartItems.length > 0) { %>
-            <% for (let product of cartItems) { %>
-                <h2>Product Name: <%= product.productId.title %></h2>
-                <h2>Product ID: <%= product._id %></h2>
-                <h2>Price: <%= product.productId.price %></h2>
-                <h2>Quantity: <%= product.quantity %></h2>
+        <% if (cart.items.length > 0) { %>
+            <% for (let item of cart.items) { %>
+                <h2>Product Name: <%= item.title %></h2>
+                <h2>Product ID: <%= item.productId %></h2>
+                <h2>Price: <%= item.price %></h2>
+                <h2>Quantity: <%= item.quantity %></h2>
                 <form action="/delete-product" method="post">
-                    <input type="hidden" name="productId123" value="<%= product._id %>">
-                    <input type="hidden" name="productPrice123" value="<%= product.price %>">
+                    <input type="hidden" name="productId123" value="<%= item.productId %>">
+                    <input type="hidden" name="productPrice123" value="<%= item.price %>">
                     <button class="btn" type="submit">Remove</button>
                 </form>
                 <hr>
             <% } %>
-            <h2>Total Price: <%= cartItems.totalPrice %></h2>
+            <h2>Total Price: <%= cart.totalPrice %></h2>
             <div>
                 <a href="/clearCart" class="btn">Clear Cart</a>
             </div>

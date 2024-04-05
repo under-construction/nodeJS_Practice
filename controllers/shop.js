@@ -41,7 +41,7 @@ exports.getCart = async (req, res, next) => {
         res.render('shop123/cart', {
             path123: '/cart',
             pageTitle123: 'Your Cart',
-            cartItems: user.cart.items
+            cart: user.cart
         })
     } catch (err) {
         console.error(err);
@@ -62,14 +62,16 @@ exports.postCart = async (req, res, next) => {
     }
 }
 
-// exports.deleteProductFromCart = (req, res, next) => {
-//     const productId = req.body.productId123;
+exports.deleteProductFromCart = async (req, res, next) => {
+    const productId = req.body.productId123;
 
-//     req.user.deleteProductFromCart(productId)
-//         .then(result => {
-//             res.redirect('/cart');
-//         });
-// }
+    try {
+        const item = await req.user.deleteProductFromCart(productId);
+        res.redirect('/cart');
+    } catch (err) {
+        console.error(err);
+    }
+}
 
 // exports.clearCart = (req, res, next) => {
 //     req.user.clearCart()
