@@ -69,7 +69,32 @@ userSchema.methods.addToCart = async function (product) {
 }
 
 userSchema.methods.getCart = async function () {
-    return this;
+
+    const cartItemIds = this.cart.items.map(i => {
+        return i.productId;
+    });
+
+    const productPrices = await Product
+        .find({
+            _id: {
+                $in: cartItemIds
+            }
+        })
+        .select('title price');
+
+    const cartItemsWithPrices = this.cart.items.map(i => {
+        return {
+            productId: i.productId,
+            title: productPrices.find(j => j._id.toString() === i.productId.toString()).title,
+            quantity: i.quantity,
+            price: productPrices.find(j => j._id.toString() === i.productId.toString()).price
+        }
+    });
+
+    return {
+        items: cartItemsWithPrices,
+        totalPrice: this.cart.totalPrice
+    };
 }
 
 userSchema.methods.deleteProductFromCart = async function (productId) {
