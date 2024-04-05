@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Product = require('./product');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -69,6 +70,42 @@ userSchema.methods.addToCart = async function (product) {
 
 userSchema.methods.getCart = async function () {
     return this;
+}
+
+userSchema.methods.deleteProductFromCart = async function (productId) {
+    const removedCartItemIndex = this.cart.items.findIndex(i => {
+        return i.productId.toString() === productId.toString();
+    });
+
+    let newQuantity;
+    let newCartTotalPrice;
+    let updatedCartItems = [...this.cart.items];
+
+    const removedProduct = await Product
+        .findById(productId)
+        .select('price -_id');
+
+    newQuantity = updatedCartItems[removedCartItemIndex].quantity - 1;
+    newCartTotalPrice = this.cart.totalPrice - removedProduct.price;
+
+    if (newQuantity === 0) {
+        updatedCartItems = updatedCartItems.filter(i => {
+            return i.productId.toString() !== productId.toString();
+        });
+    }
+
+    const updatedCart = {
+        items: updatedCartItems,
+        totalPrice: newCartTotalPrice
+    };
+
+    this.cart = updatedCart;
+
+    return await this.save();
+}
+
+userSchema.methods.recalculateCartTotalPrice = function (productId) {
+
 }
 
 module.exports = mongoose.model('User', userSchema);
