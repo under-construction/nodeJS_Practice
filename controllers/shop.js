@@ -30,7 +30,8 @@ exports.getIndex = async (req, res, next) => {
 
 exports.getCart = async (req, res, next) => {
     try {
-        const user = await req.user;
+        const result = await req.user.getCart();
+
         // .populate('cart.items.productId');
 
         // const getCartMth = await req.user.getCart();
@@ -41,7 +42,7 @@ exports.getCart = async (req, res, next) => {
         res.render('shop123/cart', {
             path123: '/cart',
             pageTitle123: 'Your Cart',
-            cart: user.cart
+            cart: result
         })
     } catch (err) {
         console.error(err);
