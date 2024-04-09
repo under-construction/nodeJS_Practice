@@ -129,10 +129,6 @@ userSchema.methods.deleteProductFromCart = async function (productId) {
     return await this.save();
 }
 
-userSchema.methods.recalculateCartTotalPrice = function (productId) {
-
-}
-
 userSchema.methods.clearCart = async function () {
     this.cart = {
         items: [],
@@ -140,6 +136,30 @@ userSchema.methods.clearCart = async function () {
     }
 
     return await this.save();
+}
+
+userSchema.methods.removeDeletedProductFromCart = async function (product) {
+    const cartItem = this.cart.items.find(i => {
+        return i.productId.toString() === product._id.toString();
+    });
+
+    const updatedCartItems = this.cart.items.filter(i => {
+        return i.productId.toString() !== product._id.toString();
+    });
+
+    const updatedCartTotalPrice = this.cart.totalPrice - product.price * cartItem.quantity;
+
+    this.cart = {
+        items: updatedCartItems,
+        totalPrice: updatedCartTotalPrice
+    }
+
+    await this.save();
+}
+
+userSchema.methods.isInCart = function (productId) {
+    const cartItem = this.cart.items.find(i => i.productId.toString() === productId.toString());
+    return cartItem;
 }
 
 module.exports = mongoose.model('User', userSchema);
