@@ -84,26 +84,21 @@ exports.clearCart = async (req, res, next) => {
     }
 }
 
-// // exports.getCheckOut = (req, res, next) => {
-// //     res.render('shop123/checkout', {
-// //         path123: '/checkout',
-// //         pageTitle123: 'Checkout'
-// //     });
-// // }
+exports.getOrders = async (req, res, next) => {
+    try {
+        const orders = await Order.find({
+            'user.userId': req.user._id
+        });
 
-// exports.getOrders = (req, res, next) => {
-//     req.user.getOrders()
-//         .then(orders => {
-//             res.render('shop123/orders', {
-//                 path123: '/orders',
-//                 pageTitle123: 'Orders',
-//                 orders: orders
-//             });
-//         })
-//         .catch(err => {
-//             console.log(err);
-//         })
-// }
+        res.render('shop123/orders', {
+            path123: '/orders',
+            pageTitle123: 'Orders',
+            orders: orders
+        });
+    } catch (err) {
+        console.error(err);
+    }
+}
 
 exports.postOrder = async (req, res, next) => {
     try {
