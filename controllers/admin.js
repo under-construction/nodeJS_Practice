@@ -96,6 +96,10 @@ exports.deleteProduct = async (req, res, next) => {
             return;
         }
 
+        if (await req.user.isInCart(req.params.productId123)) {
+            await req.user.removeDeletedProductFromCart(productToBeDeleted);
+        }
+
         const deleteResult = await productToBeDeleted.deleteOne();
         res.redirect('/admin123/product-list123');
 
