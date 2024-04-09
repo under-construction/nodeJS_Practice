@@ -1,291 +1,165 @@
-const { getDB } = require('../util/database');
-const { ObjectId } = require('mongodb');
+const mongoose = require('mongoose');
+const Product = require('./product');
 
-class User {
-    constructor(name, email, cart, id) {
-        this.name = name;
-        this.email = email;
-        this.cart = cart;
-        this._id = id;
-    }
-
-    save() {
-        let db = getDB();
-        return db
-            .collection('users')
-            .insertOne(this)
-            .then(result => {
-                return result;
-            })
-            .catch(err => {
-                console.log(err);
-            });
-    }
-
-    addToCart(product) {
-        if (!this.cart) {
-            this.cart = {
-                items: [],
-                totalPrice: 0
-            };
-        }
-
-        const cartProductIndex = this.cart.items.findIndex(cp => {
-            return cp.productId.toString() === product._id.toString();
-        });
-        let newQuantity = 1;
-        let updatedCartItems = [...this.cart.items];
-
-        if (cartProductIndex >= 0) {
-            newQuantity = this.cart.items[cartProductIndex].quantity + 1;
-            updatedCartItems[cartProductIndex].quantity = newQuantity;
-        } else {
-            updatedCartItems.push({
-                productId: product._id,
-                quantity: newQuantity
-            });
-        }
-
-        this.cart.totalPrice += (+product.price);
-
-        const updatedCart = {
-            items: updatedCartItems,
-            totalPrice: this.cart.totalPrice
-        };
-
-        const db = getDB();
-        return db
-            .collection('users')
-            .updateOne(
-                { _id: this._id },
-                { $set: { cart: updatedCart } }
-            );
-    }
-
-    getCart() {
-        const db = getDB();
-        const productIDs = this.cart.items.map(i => i.productId);
-        const totalPrice = this.cart.totalPrice;
-        return db
-            .collection('products')
-            .find({ _id: { $in: productIDs } })
-            .toArray()
-            .then(products => {
-                return {
-                    products: products.map(p => {
-                        return {
-                            ...p,
-                            quantity: this.cart.items.find(i => {
-                                return i.productId.toString() === p._id.toString();
-                            }).quantity
-                        };
-                    }),
-                    totalPrice: totalPrice
-                };
-            });
-    }
-
-    deleteProductFromCart(productId) {
-        const removedProductIndex = this.cart.items.findIndex(i => {
-            return i.productId.toString() === productId.toString();
-        });
-
-        let newQuantity = this.cart.items[removedProductIndex].quantity - 1;
-        let updatedCartItems = [...this.cart.items];
-        updatedCartItems[removedProductIndex].quantity = newQuantity;
-
-        if (newQuantity === 0) {
-            updatedCartItems = updatedCartItems.filter(i => {
-                return i.productId.toString() !== productId.toString();
-            });
-
-        }
-
-        const db = getDB();
-
-        return db
-            .collection('products')
-            .findOne(
-                {
-                    _id: ObjectId.createFromHexString(productId)
+const userSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true
+    },
+    cart: {
+        items: [
+            {
+                productId: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    required: true,
+                    ref: 'Product'
                 },
-                {
-                    projection: {
-                        price: 1
-                    }
+                quantity: {
+                    type: Number,
+                    required: true
                 }
-            )
-            .then(product => {
-                let updatedCartTotalPrice = this.cart.totalPrice - product.price;
-
-                const updatedCart = {
-                    items: updatedCartItems,
-                    totalPrice: updatedCartTotalPrice
-                }
-
-                return db
-                    .collection('users')
-                    .updateOne(
-                        { _id: this._id },
-                        { $set: { cart: updatedCart } }
-                    );
-            })
+            }
+        ],
+        totalPrice: {
+            type: Number,
+            required: true
+        }
     }
+});
 
-    clearCart() {
-        let emptyCart = {
+userSchema.methods.addToCart = async function (product) {
+    if (!this.cart) {
+        this.cart = {
             items: [],
             totalPrice: 0
-        }
-
-        const db = getDB();
-        return db
-            .collection('users')
-            .updateOne(
-                { _id: this._id },
-                { $set: { cart: emptyCart } }
-            );
+        };
     }
 
-    addOrder() {
-        const db = getDB();
-        return this.getCart()
-            .then(cart => {
-                const order = {
-                    items: cart.products,
-                    totalPrice: cart.totalPrice,
-                    user: {
-                        _id: this._id,
-                        name: this.name
-                    }
-                };
-                return db.collection('orders')
-                    .insertOne(order);
-            })
-            .then(result => {
-                this.cart = { items: [], totalPrice: 0 };
-                return db
-                    .collection('users')
-                    .updateOne(
-                        { _id: this._id },
-                        { $set: { cart: { items: [], totalPrice: 0 } } }
-                    );
-            });
-    }
+    const cartProductIndex = this.cart.items.findIndex(cp => {
+        return cp.productId.toString() === product._id.toString();
+    });
 
-    getOrders() {
-        const db = getDB();
-        return db.collection('orders')
-            .find({ 'user._id': this._id })
-            .toArray();
-    }
+    let newQuantity = 1;
+    let updatedCartItems = [...this.cart.items];
 
-    static getById(id) {
-        let db = getDB();
-        return db
-            .collection('users')
-            .findOne({
-                _id: ObjectId.createFromHexString(id)
-            })
-            .then(result => {
-                return result;
-            })
-            .catch(err => {
-                console.log(err);
-            });
-    }
-
-    isInCart(productId) {
-        return this.cart.items.find(i => i.productId.toString() === productId.toString());
-    }
-
-    removeDeletedProductFromCart(productId) {
-        const deletedProductIndex = this.cart.items.findIndex(i => {
-            return i.productId.toString() === productId.toString();
+    if (cartProductIndex >= 0) {
+        newQuantity = this.cart.items[cartProductIndex].quantity + 1;
+        updatedCartItems[cartProductIndex].quantity = newQuantity;
+    } else {
+        updatedCartItems.push({
+            productId: product._id,
+            quantity: newQuantity
         });
+    }
 
-        let productQuantity = this.cart.items[deletedProductIndex].quantity;
+    this.cart.totalPrice += (+product.price);
 
-        let updatedCartItems = [...this.cart.items];
+    const updatedCart = {
+        items: updatedCartItems,
+        totalPrice: this.cart.totalPrice
+    }
+
+    this.cart = updatedCart;
+
+    return await this.save();
+}
+
+userSchema.methods.getCart = async function () {
+
+    const cartItemIds = this.cart.items.map(i => {
+        return i.productId;
+    });
+
+    const productPrices = await Product
+        .find({
+            _id: {
+                $in: cartItemIds
+            }
+        })
+        .select('title price');
+
+    const cartItemsWithPrices = this.cart.items.map(i => {
+        return {
+            productId: i.productId,
+            title: productPrices.find(j => j._id.toString() === i.productId.toString()).title,
+            quantity: i.quantity,
+            price: productPrices.find(j => j._id.toString() === i.productId.toString()).price
+        }
+    });
+
+    return {
+        items: cartItemsWithPrices,
+        totalPrice: this.cart.totalPrice
+    };
+}
+
+userSchema.methods.deleteProductFromCart = async function (productId) {
+    const removedCartItemIndex = this.cart.items.findIndex(i => {
+        return i.productId.toString() === productId.toString();
+    });
+
+    let newQuantity;
+    let newCartTotalPrice;
+    let updatedCartItems = [...this.cart.items];
+
+    const removedProduct = await Product
+        .findById(productId)
+        .select('price -_id');
+
+    newQuantity = updatedCartItems[removedCartItemIndex].quantity - 1;
+    newCartTotalPrice = this.cart.totalPrice - removedProduct.price;
+
+    if (newQuantity === 0) {
         updatedCartItems = updatedCartItems.filter(i => {
             return i.productId.toString() !== productId.toString();
         });
-
-        const db = getDB();
-        return db
-            .collection('products')
-            .findOne(
-                {
-                    _id: ObjectId.createFromHexString(productId)
-                },
-                {
-                    projection: {
-                        price: 1
-                    }
-                }
-            )
-            .then(product => {
-                let updatedCartTotalPrice = this.cart.totalPrice - productQuantity * product.price;
-
-                const updatedCart = {
-                    items: updatedCartItems,
-                    totalPrice: updatedCartTotalPrice
-                }
-
-                return db
-                    .collection('users')
-                    .updateOne(
-                        { _id: this._id },
-                        { $set: { cart: updatedCart } }
-                    );
-            });
     }
 
-    calculateCartTotalPrice() {
-        let cartProductIds = this.cart.items.map(i => {
-            return {
-                productId: i.productId,
-                productQuantity: i.quantity
-            }
-        });
+    const updatedCart = {
+        items: updatedCartItems,
+        totalPrice: newCartTotalPrice
+    };
 
-        const db = getDB();
-        return db
-            .collection('products')
-            .find(
-                {
-                    _id: {
-                        $in: cartProductIds.map(i => i.productId)
-                    }
-                },
-                {
-                    projection: {
-                        _id: 0,
-                        price: 1
-                    }
-                }
-            )
-            .toArray()
-            .then(array => {
-                return cartProductIds.reduce((acc, curr) =>
-                    acc + curr.productQuantity * array[cartProductIds.indexOf(curr)].price
-                    , 0
-                );
-            })
-            .then(result => {
-                let updatedCart = {
-                    items: this.cart.items,
-                    totalPrice: result
-                }
+    this.cart = updatedCart;
 
-                return db
-                    .collection('users')
-                    .updateOne(
-                        { _id: this._id },
-                        { $set: { cart: updatedCart } }
-                    );
-            });
-    }
+    return await this.save();
 }
 
-module.exports = User;
+userSchema.methods.clearCart = async function () {
+    this.cart = {
+        items: [],
+        totalPrice: 0
+    }
+
+    return await this.save();
+}
+
+userSchema.methods.removeDeletedProductFromCart = async function (product) {
+    const cartItem = this.cart.items.find(i => {
+        return i.productId.toString() === product._id.toString();
+    });
+
+    const updatedCartItems = this.cart.items.filter(i => {
+        return i.productId.toString() !== product._id.toString();
+    });
+
+    const updatedCartTotalPrice = this.cart.totalPrice - product.price * cartItem.quantity;
+
+    this.cart = {
+        items: updatedCartItems,
+        totalPrice: updatedCartTotalPrice
+    }
+
+    await this.save();
+}
+
+userSchema.methods.isInCart = function (productId) {
+    const cartItem = this.cart.items.find(i => i.productId.toString() === productId.toString());
+    return cartItem;
+}
+
+module.exports = mongoose.model('User', userSchema);

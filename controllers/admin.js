@@ -8,23 +8,26 @@ exports.getAddProduct = (req, res, next) => {
     });
 }
 
-exports.postAddProduct = (req, res, next) => {
-    const title = req.body.title;
-    const imageUrl = req.body.imageUrl;
-    const description = req.body.description;
-    const price = req.body.price;
+exports.postAddProduct = async (req, res, next) => {
+    const product = new Product({
+        title: req.body.title,
+        price: req.body.price,
+        description: req.body.description,
+        imageUrl: req.body.imageUrl,
+        userId: req.user // mongoose will only pick up _id property here
+    });
 
-    const product = new Product(title, price, description, imageUrl, null, req.user._id);
-
-    product
-        .save()
-        .then(result => {
-            res.redirect('/admin123/product-list123');
-        })
-        .catch(err => console.log(err));
+    try {
+        const saveResult = await product.save();
+        res.redirect('/');
+    } catch (err) {
+        console.error(err);
+    } finally {
+        console.log('product was successfully saved');
+    }
 }
 
-exports.getEditProduct = (req, res, next) => {
+exports.getEditProduct = async (req, res, next) => {
     const editMode = req.query.edit123;
 
     if (!editMode) {
@@ -33,22 +36,23 @@ exports.getEditProduct = (req, res, next) => {
 
     const productId = req.params.productId123;
 
-    Product.getById(productId)
-        .then(product => {
-            if (!product) {
-                res.redirect('/');
-            }
-            res.render('admin123/edit-product', {
-                path123: '/admin/edit-product',
-                pageTitle123: 'Edit Product',
-                editing: true,
-                product: product
-            });
-        })
-        .catch(err => console.log(err))
+    try {
+        const findResult = await Product.findById(productId);
+        if (!findResult) {
+            res.redirect('/');
+        }
+        res.render('admin123/edit-product', {
+            path123: '/admin/edit-product',
+            pageTitle123: 'Edit Product',
+            editing: true,
+            product: findResult
+        });
+    } catch (err) {
+        console.error(err);
+    }
 }
 
-exports.postEditProduct = (req, res, next) => {
+exports.postEditProduct = async (req, res, next) => {
     const prodId = req.body.prodId123;
 
     const updatedTitle = req.body.title;
@@ -56,57 +60,50 @@ exports.postEditProduct = (req, res, next) => {
     const updatedPrice = req.body.price;
     const updatedDesc = req.body.description;
 
-    const product = new Product(
-        updatedTitle,
-        updatedPrice,
-        updatedDesc,
-        updatedImageURL,
-        prodId
-    );
+    try {
+        const retrievedProduct = await Product.findById(prodId);
+        retrievedProduct.title = updatedTitle;
+        retrievedProduct.price = updatedPrice;
+        retrievedProduct.description = updatedDesc;
+        retrievedProduct.imageUrl = updatedImageURL;
+        const saveResult = await retrievedProduct.save();
 
-    product
-        .save()
-        .then(result => {
-            return req.user.calculateCartTotalPrice();
-        })
-        .then(result => {
-            res.redirect('/admin123/product-list123')
-        })
-        .catch(err => {
-            console.log(err);
-        });
-}
-
-exports.getProducts = (req, res, next) => {
-    Product.fetchAll()
-        .then(data => {
-            res.render('admin123/admin-product-list', {
-                prods: data,
-                pageTitle123: 'Admin Products',
-                path123: '/admin/product-list'
-            });
-        })
-        .catch(err => console.log(err));
-}
-
-exports.deleteProduct = (req, res, next) => {
-    const isInCart = req.user.isInCart(req.params.productId123);
-
-    if (isInCart) {
-        return req.user.removeDeletedProductFromCart(req.params.productId123)
-            .then(result => {
-                return Product.delete(req.params.productId123)
-            })
-            .then(result => {
-                res.redirect('/admin123/product-list123');
-            })
-            .catch(err => console.log(err));
+        res.redirect('/');
+    } catch (err) {
+        console.error(err);
     }
-    else {
-        return Product.delete(req.params.productId123)
-            .then(result => {
-                res.redirect('/admin123/product-list123');
-            })
-            .catch(err => console.log(err));
+}
+
+exports.getProducts = async (req, res, next) => {
+    try {
+        const findResult = await Product.find();
+        res.render('admin123/admin-product-list', {
+            prods: findResult,
+            pageTitle123: 'Admin Products',
+            path123: '/admin/product-list'
+        });
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+exports.deleteProduct = async (req, res, next) => {
+    try {
+        const productToBeDeleted = await Product.findById(req.params.productId123);
+
+        if (!productToBeDeleted) {
+            res.redirect('/');
+            return;
+        }
+
+        if (await req.user.isInCart(req.params.productId123)) {
+            await req.user.removeDeletedProductFromCart(productToBeDeleted);
+        }
+
+        const deleteResult = await productToBeDeleted.deleteOne();
+        res.redirect('/admin123/product-list123');
+
+    } catch (err) {
+        console.error(err);
     }
 }
