@@ -133,4 +133,13 @@ userSchema.methods.recalculateCartTotalPrice = function (productId) {
 
 }
 
+userSchema.methods.clearCart = async function () {
+    this.cart = {
+        items: [],
+        totalPrice: 0
+    }
+
+    return await this.save();
+}
+
 module.exports = mongoose.model('User', userSchema);
