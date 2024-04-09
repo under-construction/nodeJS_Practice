@@ -1,18 +1,16 @@
 <%- include('../includes123/head.ejs') %>
-    <link rel="stylesheet" href="/css/product.css">
-</head>
+    </head>
 
-<body>
-    <%- include('../includes123/navigation.ejs') %>
-
-    <main class="centered">
-        <h1><%= product.title %></h1>
-        <hr>
-        <div>
-            <img src="<%= product.imageUrl %>" alt="<%= product.title %>" class="image">
-        </div>
-        <h2><%= product.price %></h2>
-        <p><%= product.description %></p>
-        <%- include('../includes123/addToCart.ejs', {product: product}) %>
-    </main>
-    <%- include('../includes123/end.ejs') %>
+    <body>
+        <%- include('../includes123/navigation.ejs') %>
+        <main class="centered">
+            <h1><%= product.title %></h1>
+            <hr>
+            <div class="image">
+                <img src="<%= product.imageUrl %>" alt="<%= product.title %>">
+            </div>
+            <h2><%= product.price %></h2>
+            <p><%= product.description %></p>
+            <%- include('../includes123/addToCart.ejs') %>
+        </main>
+        <%- include('../includes123/end.ejs') %>

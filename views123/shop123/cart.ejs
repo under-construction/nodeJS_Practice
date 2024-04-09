@@ -6,22 +6,27 @@
 
     <main>
         <% if (cart.items.length > 0) { %>
-            <% for (let item of cart.items) { %>
-                <h2>Product Name: <%= item.title %></h2>
-                <h2>Product ID: <%= item.productId %></h2>
-                <h2>Price: <%= item.price %></h2>
-                <h2>Quantity: <%= item.quantity %></h2>
-                <form action="/delete-product" method="post">
-                    <input type="hidden" name="productId123" value="<%= item.productId %>">
-                    <input type="hidden" name="productPrice123" value="<%= item.price %>">
-                    <button class="btn" type="submit">Remove</button>
-                </form>
+            <ul class="cart__item-list">
+                <% cart.items.forEach(item => { %>
+                    <li class="cart__item">
+                        <h2>Product Name: <%= item.title %></h2>
+                        <h2>Product ID: <%= item.productId %></h2>
+                        <h2>Price: <%= item.price %></h2>
+                        <h2>Quantity: <%= item.quantity %></h2>
+                        <form action="/delete-product" method="post">
+                            <input type="hidden" name="productId123" value="<%= item.productId %>">
+                            <input type="hidden" name="productPrice123" value="<%= item.price %>">
+                            <button class="btn" type="submit">Remove</button>
+                        </form>
+                    </li>
+                <% }) %>
+            </ul>
                 <hr>
-            <% } %>
-            <h2>Total Price: <%= cart.totalPrice %></h2>
-            <div>
-                <a href="/clearCart" class="btn">Clear Cart</a>
-            </div>
+                <div>
+                    <h2>Total Price: <%= cart.totalPrice %></h2>
+                    <a href="/clearCart" class="btn">Clear Cart</a>
+                </div>
+
             <div style="margin: 1rem 0">
                 <form action="/create-order" method="POST">
                     <button type="submit" class="btn">Order Now!</button>

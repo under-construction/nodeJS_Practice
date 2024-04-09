@@ -112,6 +112,7 @@ userSchema.methods.deleteProductFromCart = async function (productId) {
 
     newQuantity = updatedCartItems[removedCartItemIndex].quantity - 1;
     newCartTotalPrice = this.cart.totalPrice - removedProduct.price;
+    updatedCartItems[removedCartItemIndex].quantity = newQuantity;
 
     if (newQuantity === 0) {
         updatedCartItems = updatedCartItems.filter(i => {
