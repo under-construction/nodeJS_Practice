@@ -21,6 +21,7 @@ app.use(express.static(path.join(__dirname, 'public1234')));
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
 
 app.use((req, res, next) => {
     User.findById('6606cc7783bd47644d4022ba')
@@ -39,6 +40,7 @@ app.use((req, res, next) => {
 
 app.use('/admin123', adminRoutes);
 app.use(shopRoutes);
+app.use('/auth789', authRoutes);
 
 
 // run(() => {
