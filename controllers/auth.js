@@ -4,3 +4,8 @@ exports.getLogin = (req, res, next) => {
         pageTitle123: 'Login'
     });
 }
+
+exports.postLogin = (req, res, next) => {
+    console.log('login request has been sent');
+    res.redirect('/');
+}
