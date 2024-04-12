@@ -29,6 +29,7 @@ app.use((req, res, next) => {
             // ANYTHING CAN BE ATTACHED TO ANY REQUEST VIA MIDDLEWARES FOR FURTHER USE ANYWHERE.
             req.user = user;
             req.x = 1;
+            req.isLoggedIn = true;
             next();
         })
         .then(() => {
