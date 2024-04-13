@@ -7,7 +7,8 @@ exports.getProducts = async (req, res, next) => {
         res.render('shop123/shop-product-list', {
             prods: findResult,
             pageTitle123: 'Shop123',
-            path123: '/products'
+            path123: '/products',
+            isAuthenticated: req.isLoggedIn
         });
     } catch (err) {
         console.error(err);
@@ -22,7 +23,8 @@ exports.getIndex = async (req, res, next) => {
         res.render('shop123/index', {
             prods: findResult,
             pageTitle123: 'Shop123',
-            path123: '/shop'
+            path123: '/shop',
+            isAuthenticated: req.isLoggedIn
         });
     } catch (err) {
         console.error(err);
@@ -43,8 +45,9 @@ exports.getCart = async (req, res, next) => {
         res.render('shop123/cart', {
             path123: '/cart',
             pageTitle123: 'Your Cart',
-            cart: result
-        })
+            cart: result,
+            isAuthenticated: req.isLoggedIn
+        });
     } catch (err) {
         console.error(err);
     }
@@ -93,7 +96,8 @@ exports.getOrders = async (req, res, next) => {
         res.render('shop123/orders', {
             path123: '/orders',
             pageTitle123: 'Orders',
-            orders: orders
+            orders: orders,
+            isAuthenticated: req.isLoggedIn
         });
     } catch (err) {
         console.error(err);
@@ -140,7 +144,8 @@ exports.getProductDetail = async (req, res, next) => {
         res.render('shop123/product-detail', {
             path123: `/products`,
             pageTitle123: `Product Detail: ${findResult.title}`,
-            product: findResult
+            product: findResult,
+            isAuthenticated: req.isLoggedIn
         });
     } catch (err) {
         console.error(err);
