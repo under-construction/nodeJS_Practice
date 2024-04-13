@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const mongoose = require('mongoose');
 const session = require('express-session');
+const MongoDBStore123 = require('connect-mongodb-session')(session);
 
 const notFound404Controller = require('./controllers/404');
 const { run } = require('./util/database');
@@ -10,9 +11,13 @@ const User = require('./models/user');
 
 const PORT = 3080;
 
-const uri = 'mongodb+srv://sa:123@mongodbpractice123.zxtp6fe.mongodb.net/shopDatabase987?retryWrites=true&w=majority&appName=mongoDBPractice123';
+const uri = 'mongodb+srv://sa:123@mongodbpractice123.zxtp6fe.mongodb.net/shopDatabase987?w=majority&appName=mongoDBPractice123';
 
 const app = express();
+const store123 = new MongoDBStore123({
+    uri: uri,
+    collection: 'mySessions987'
+})
 
 app.set('view engine', 'ejs');
 app.set('views', 'views123');
@@ -25,7 +30,8 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         maxAge: 60000
-    }
+    },
+    store: store123
 }));
 
 const adminRoutes = require('./routes/admin');
