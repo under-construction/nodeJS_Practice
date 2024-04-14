@@ -16,9 +16,11 @@ exports.postLogin = async (req, res, next) => {
     if (user) {
         req.session.user = user;
         req.session.isLoggedIn = true;
+        req.session.save(err => {
+            console.error(err);
+            res.redirect('/');
+        });
     }
-
-    res.redirect('/');
 }
 
 exports.postLogout = async (req, res, next) => {
