@@ -15,7 +15,7 @@ exports.postAddProduct = async (req, res, next) => {
         price: req.body.price,
         description: req.body.description,
         imageUrl: req.body.imageUrl,
-        userId: req.session.user // mongoose will only pick up _id property here
+        userId: req.user // mongoose will only pick up _id property here
     });
 
     try {
@@ -99,8 +99,8 @@ exports.deleteProduct = async (req, res, next) => {
             return;
         }
 
-        if (await req.session.user.isInCart(req.params.productId123)) {
-            await req.session.user.removeDeletedProductFromCart(productToBeDeleted);
+        if (await req.user.isInCart(req.params.productId123)) {
+            await req.user.removeDeletedProductFromCart(productToBeDeleted);
         }
 
         const deleteResult = await productToBeDeleted.deleteOne();

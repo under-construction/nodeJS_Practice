@@ -33,11 +33,11 @@ exports.getIndex = async (req, res, next) => {
 
 exports.getCart = async (req, res, next) => {
     try {
-        const result = await req.session.user.getCart();
+        const result = await req.user.getCart();
 
         // .populate('cart.items.productId');
 
-        // const getCartMth = await req.session.user.getCart();
+        // const getCartMth = await req.user.getCart();
         // console.log(user);
         // console.log(getCartMth);
         // console.log(user === getCartMth); // PRINTS true
@@ -59,7 +59,7 @@ exports.postCart = async (req, res, next) => {
     try {
         const product = await Product.findById(retrievedProdId);
         if (product) {
-            const addToCartResult = await req.session.user.addToCart(product);
+            const addToCartResult = await req.user.addToCart(product);
             res.redirect('/cart');
         }
     } catch (err) {
@@ -71,7 +71,7 @@ exports.deleteProductFromCart = async (req, res, next) => {
     const productId = req.body.productId123;
 
     try {
-        const item = await req.session.user.deleteProductFromCart(productId);
+        const item = await req.user.deleteProductFromCart(productId);
         res.redirect('/cart');
     } catch (err) {
         console.error(err);
@@ -80,7 +80,7 @@ exports.deleteProductFromCart = async (req, res, next) => {
 
 exports.clearCart = async (req, res, next) => {
     try {
-        const result = await req.session.user.clearCart();
+        const result = await req.user.clearCart();
         res.redirect('/cart');
     } catch (err) {
         console.error(err);
@@ -90,7 +90,7 @@ exports.clearCart = async (req, res, next) => {
 exports.getOrders = async (req, res, next) => {
     try {
         const orders = await Order.find({
-            'user.userId': req.session.user._id
+            'user.userId': req.user._id
         });
 
         res.render('shop123/orders', {
@@ -106,7 +106,7 @@ exports.getOrders = async (req, res, next) => {
 
 exports.postOrder = async (req, res, next) => {
     try {
-        const populatedUser = await req.session.user.populate('cart.items.productId');
+        const populatedUser = await req.user.populate('cart.items.productId');
 
         const orderProducts = await populatedUser.cart.items.map(i => {
             return {
@@ -116,19 +116,19 @@ exports.postOrder = async (req, res, next) => {
         });
 
         const orderUser = {
-            name: req.session.user.name,
-            userId: req.session.user
+            name: req.user.name,
+            userId: req.user
         }
 
         const order = new Order({
             products: orderProducts,
             user: orderUser,
-            totalPrice: req.session.user.cart.totalPrice
+            totalPrice: req.user.cart.totalPrice
         })
 
         await order.save();
 
-        await req.session.user.clearCart();
+        await req.user.clearCart();
 
         res.redirect('/orders');
     } catch (err) {
