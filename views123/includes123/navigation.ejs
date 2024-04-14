@@ -9,31 +9,46 @@
             <li class="main-header__item">
                 <a class="<%= path123 === '/products' ? 'active' : '' %>" href="/products">Products</a>
             </li>
-            <li class="main-header__item">
-                <a class="<%= path123 === '/cart' ? 'active' : '' %>" href="/cart">Cart</a>
-            </li>
-            <li class="main-header__item">
-                <a class="<%= path123 === '/orders' ? 'active' : '' %>" href="/orders">Orders</a>
-            </li>
+
             <% if (isAuthenticated) { %>
+
+                <li class="main-header__item">
+                    <a class="<%= path123 === '/cart' ? 'active' : '' %>" href="/cart">Cart</a>
+                </li>
+                <li class="main-header__item">
+                    <a class="<%= path123 === '/orders' ? 'active' : '' %>" href="/orders">Orders</a>
+                </li>
                 <li class="main-header__item">
                     <a class="<%= path123 === '/admin/add-product' ? 'active' : '' %>" href="/admin123/add-product">Add Product</a>
                 </li>
                 <li class="main-header__item">
                     <a class="<%= path123 === '/admin/product-list' ? 'active' : '' %>" href="/admin123/product-list123">Admin Products</a>
-                </li>
+            </li>
+
             <% } %>
         </ul>
+
+        
         <ul class="main-header__item-list">
-            <li class="main-header__item">
-                <a class="<%= path123 === '/auth444/login444' ? 'active' : '' %>" href="/auth789/login789">Login</a>
-            </li>
-            <li class="main-header__item">
-                <form action="/auth789/postLogout456" method="post">
-                    <button type="submit">Logout</button>
-                </form>
-            </li>
+
+            <% if (!isAuthenticated) { %>
+
+                <li class="main-header__item">
+                    <a class="<%= path123 === '/auth444/login444' ? 'active' : '' %>" href="/auth789/login789">Login</a>
+                </li>
+
+            <% } else { %>
+
+                <li class="main-header__item">
+                    <form action="/auth789/postLogout456" method="post">
+                        <button type="submit">Logout</button>
+                    </form>
+                </li>
+
+            <% } %>
+
         </ul>
+
     </nav>
 </header>
 

@@ -38,26 +38,9 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
-app.use((req, res, next) => {
-    User.findById('6606cc7783bd47644d4022ba')
-        .then(user => {
-            // ANYTHING CAN BE ATTACHED TO ANY REQUEST VIA MIDDLEWARES FOR FURTHER USE ANYWHERE.
-            req.user = user;
-            req.x = 1;
-            // req.isLoggedIn = true;
-            next();
-        })
-        .then(() => {
-            console.log('*****************');
-        })
-        .catch(err => console.log(err));
-    // next();
-});
-
 app.use('/admin123', adminRoutes);
 app.use(shopRoutes);
 app.use('/auth789', authRoutes);
-
 
 // run(() => {
 //     app.listen(PORT);

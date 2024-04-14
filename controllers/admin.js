@@ -5,7 +5,7 @@ exports.getAddProduct = (req, res, next) => {
         path123: '/admin/add-product',
         pageTitle123: 'Add Product',
         editing: false,
-        isAuthenticated: req.isLoggedIn
+        isAuthenticated: req.session.isLoggedIn
     });
 }
 
@@ -15,7 +15,7 @@ exports.postAddProduct = async (req, res, next) => {
         price: req.body.price,
         description: req.body.description,
         imageUrl: req.body.imageUrl,
-        userId: req.user // mongoose will only pick up _id property here
+        userId: req.session.user // mongoose will only pick up _id property here
     });
 
     try {
@@ -47,7 +47,7 @@ exports.getEditProduct = async (req, res, next) => {
             pageTitle123: 'Edit Product',
             editing: true,
             product: findResult,
-            isAuthenticated: req.isLoggedIn
+            isAuthenticated: req.session.isLoggedIn
         });
     } catch (err) {
         console.error(err);
@@ -83,7 +83,7 @@ exports.getProducts = async (req, res, next) => {
             prods: findResult,
             pageTitle123: 'Admin Products',
             path123: '/admin/product-list',
-            isAuthenticated: req.isLoggedIn
+            isAuthenticated: req.session.isLoggedIn
         });
     } catch (err) {
         console.error(err);
@@ -99,8 +99,8 @@ exports.deleteProduct = async (req, res, next) => {
             return;
         }
 
-        if (await req.user.isInCart(req.params.productId123)) {
-            await req.user.removeDeletedProductFromCart(productToBeDeleted);
+        if (await req.session.user.isInCart(req.params.productId123)) {
+            await req.session.user.removeDeletedProductFromCart(productToBeDeleted);
         }
 
         const deleteResult = await productToBeDeleted.deleteOne();
