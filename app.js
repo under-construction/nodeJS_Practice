@@ -2,6 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const mongoose = require('mongoose');
+const session = require('express-session');
+const MongoDBStore123 = require('connect-mongodb-session')(session);
 
 const notFound404Controller = require('./controllers/404');
 const { run } = require('./util/database');
@@ -9,37 +11,52 @@ const User = require('./models/user');
 
 const PORT = 3080;
 
-const uri = 'mongodb+srv://sa:123@mongodbpractice123.zxtp6fe.mongodb.net/shopDatabase987?retryWrites=true&w=majority&appName=mongoDBPractice123';
+const uri = 'mongodb+srv://sa:123@mongodbpractice123.zxtp6fe.mongodb.net/shopDatabase987?w=majority&appName=mongoDBPractice123';
+
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
 
 const app = express();
+const store123 = new MongoDBStore123({
+    uri: uri,
+    collection: 'mySessions987'
+})
 
 app.set('view engine', 'ejs');
 app.set('views', 'views123');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public1234')));
+app.use(session({
+    secret: 'secret-key-123',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 60000
+    },
+    store: store123
+}));
 
-const adminRoutes = require('./routes/admin');
-const shopRoutes = require('./routes/shop');
 
 app.use((req, res, next) => {
-    User.findById('6606cc7783bd47644d4022ba')
+    if (!req.session.user) {
+        return next();
+    }
+
+    User.findById(req.session.user._id)
         .then(user => {
-            // ANYTHING CAN BE ATTACHED TO ANY REQUEST VIA MIDDLEWARES FOR FURTHER USE ANYWHERE.
             req.user = user;
-            req.x = 1;
             next();
         })
-        .then(() => {
-            console.log('*****************');
-        })
-        .catch(err => console.log(err));
-    // next();
+        .catch(err => {
+            console.error(err);
+        });
 });
 
 app.use('/admin123', adminRoutes);
 app.use(shopRoutes);
-
+app.use('/auth789', authRoutes);
 
 // run(() => {
 //     app.listen(PORT);

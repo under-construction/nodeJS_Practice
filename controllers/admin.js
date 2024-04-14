@@ -4,7 +4,8 @@ exports.getAddProduct = (req, res, next) => {
     res.render('admin123/edit-product', {
         path123: '/admin/add-product',
         pageTitle123: 'Add Product',
-        editing: false
+        editing: false,
+        isAuthenticated: req.session.isLoggedIn
     });
 }
 
@@ -45,7 +46,8 @@ exports.getEditProduct = async (req, res, next) => {
             path123: '/admin/edit-product',
             pageTitle123: 'Edit Product',
             editing: true,
-            product: findResult
+            product: findResult,
+            isAuthenticated: req.session.isLoggedIn
         });
     } catch (err) {
         console.error(err);
@@ -80,7 +82,8 @@ exports.getProducts = async (req, res, next) => {
         res.render('admin123/admin-product-list', {
             prods: findResult,
             pageTitle123: 'Admin Products',
-            path123: '/admin/product-list'
+            path123: '/admin/product-list',
+            isAuthenticated: req.session.isLoggedIn
         });
     } catch (err) {
         console.error(err);
