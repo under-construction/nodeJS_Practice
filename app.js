@@ -13,6 +13,10 @@ const PORT = 3080;
 
 const uri = 'mongodb+srv://sa:123@mongodbpractice123.zxtp6fe.mongodb.net/shopDatabase987?w=majority&appName=mongoDBPractice123';
 
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
+
 const app = express();
 const store123 = new MongoDBStore123({
     uri: uri,
@@ -34,9 +38,21 @@ app.use(session({
     store: store123
 }));
 
-const adminRoutes = require('./routes/admin');
-const shopRoutes = require('./routes/shop');
-const authRoutes = require('./routes/auth');
+
+app.use((req, res, next) => {
+    if (!req.session.user) {
+        return next();
+    }
+
+    User.findById(req.session.user._id)
+        .then(user => {
+            req.user = user;
+            next();
+        })
+        .catch(err => {
+            console.error(err);
+        });
+});
 
 app.use('/admin123', adminRoutes);
 app.use(shopRoutes);
