@@ -4,6 +4,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore123 = require('connect-mongodb-session')(session);
+const csrf = require('csurf');
 
 const notFound404Controller = require('./controllers/404');
 const { run } = require('./util/database');
@@ -21,7 +22,8 @@ const app = express();
 const store123 = new MongoDBStore123({
     uri: uri,
     collection: 'mySessions987'
-})
+});
+const csrfProtection = csrf();
 
 app.set('view engine', 'ejs');
 app.set('views', 'views123');
@@ -37,6 +39,7 @@ app.use(session({
     // },
     store: store123
 }));
+app.use(csrfProtection);
 
 
 app.use((req, res, next) => {
