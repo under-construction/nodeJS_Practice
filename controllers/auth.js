@@ -10,15 +10,36 @@ exports.getLogin = (req, res, next) => {
 }
 
 exports.postLogin = async (req, res, next) => {
-    const user = await User.findById('6606cc7783bd47644d4022ba');
+    const email = req.body.email;
+    const password = req.body.password;
+
+    const user = await User.findOne({
+        email: email
+    });
+
+    if (!user) {
+        return res.redirect('/auth789/login789');
+    }
+
+    try {
+        const pwComparison = await bcrypt.compare(password, user.password);
+
+        if (pwComparison) {
+            req.session.user = user;
+            req.session.isLoggedIn = true;
+            return req.session.save(err => {
+                console.error(err);
+                res.redirect('/');
+            });
+        }
+
+        res.redirect('/auth789/login789');
+    } catch (err) {
+        console.error(err);
+        return res.redirect('/auth789/login789');
+    }
 
     if (user) {
-        req.session.user = user;
-        req.session.isLoggedIn = true;
-        req.session.save(err => {
-            console.error(err);
-            res.redirect('/');
-        });
     }
 }
 
