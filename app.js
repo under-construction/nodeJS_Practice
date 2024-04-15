@@ -32,9 +32,9 @@ app.use(session({
     secret: 'secret-key-123',
     resave: false,
     saveUninitialized: false,
-    cookie: {
-        maxAge: 60000
-    },
+    // cookie: {
+    //     maxAge: 60000
+    // },
     store: store123
 }));
 
