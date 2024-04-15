@@ -30,7 +30,34 @@ exports.getSignUp = async (req, res, next) => {
 }
 
 exports.postSignUp = async (req, res, next) => {
+    const email = req.body.email;
+    const password = req.body.password;
+    const confirmPassword = req.body.confirmPassword;
 
+    try {
+        const existingUser = await User.findOne({
+            email: email
+        });
+
+        if (existingUser) {
+            return res.redirect('/auth789/signup789');
+        }
+
+        const newUser = new User({
+            email: email,
+            password: password,
+            cart: {
+                items: [],
+                totalPrice: 0
+            }
+        });
+
+        await newUser.save();
+
+        res.redirect('/auth789/login789');
+    } catch (err) {
+        console.error(err);
+    }
 }
 
 exports.postLogout = async (req, res, next) => {

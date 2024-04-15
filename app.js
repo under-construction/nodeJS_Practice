@@ -70,18 +70,18 @@ app.use(notFound404Controller.notFound404);
 
 async function main() {
     await mongoose.connect(uri);
-    const ifAUserExists = await User.findOne();
-    if (!ifAUserExists) {
-        const user = new User({
-            name: 'ercu',
-            email: 'ercu@test.com',
-            cart: {
-                items: [],
-                totalPrice: 0
-            }
-        });
-        await user.save();
-    }
+    // const ifAUserExists = await User.findOne();
+    // if (!ifAUserExists) {
+    //     const user = new User({
+    //         name: 'ercu',
+    //         email: 'ercu@test.com',
+    //         cart: {
+    //             items: [],
+    //             totalPrice: 0
+    //         }
+    //     });
+    //     await user.save();
+    // }
     app.listen(PORT);
 }
 
