@@ -4,7 +4,8 @@ const bcrypt = require('bcryptjs');
 exports.getLogin = (req, res, next) => {
     res.render('auth456/login456', {
         path123: '/auth444/login444',
-        pageTitle123: 'Login'
+        pageTitle123: 'Login',
+        errorMessage: req.flash('error123')
     });
 }
 
@@ -17,6 +18,7 @@ exports.postLogin = async (req, res, next) => {
     });
 
     if (!user) {
+        req.flash('error123', 'Invalid email or password.');
         return res.redirect('/auth789/login789');
     }
 
