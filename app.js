@@ -43,19 +43,18 @@ app.use(session({
 app.use(csrfProtection);
 app.use(flash());
 
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
     if (!req.session.user) {
         return next();
     }
 
-    User.findById(req.session.user._id)
-        .then(user => {
-            req.user = user;
-            next();
-        })
-        .catch(err => {
-            console.error(err);
-        });
+    try {
+        const user = await User.findById(req.session.user._id);
+        req.user = user;
+        next(); // stops sending request-based operations to the next middleware after this 
+    } catch (error) {
+        console.error(error);
+    }
 });
 
 app.use((req, res, next) => {
@@ -67,6 +66,10 @@ app.use((req, res, next) => {
 app.use('/admin123', adminRoutes);
 app.use(shopRoutes);
 app.use('/auth789', authRoutes);
+
+// app.use('/favicon.ico', (req, res, next) => {
+//     res.status(404).end();
+// });
 
 // run(() => {
 //     app.listen(PORT);
