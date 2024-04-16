@@ -2,11 +2,11 @@ const mongoose = require('mongoose');
 const Product = require('./product');
 
 const userSchema = new mongoose.Schema({
-    name: {
+    email: {
         type: String,
         required: true
     },
-    email: {
+    password: {
         type: String,
         required: true
     },

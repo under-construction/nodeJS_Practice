@@ -4,6 +4,8 @@ const path = require('path');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore123 = require('connect-mongodb-session')(session);
+const csrf = require('csurf');
+const flash = require('connect-flash');
 
 const notFound404Controller = require('./controllers/404');
 const { run } = require('./util/database');
@@ -21,7 +23,8 @@ const app = express();
 const store123 = new MongoDBStore123({
     uri: uri,
     collection: 'mySessions987'
-})
+});
+const csrfProtection = csrf();
 
 app.set('view engine', 'ejs');
 app.set('views', 'views123');
@@ -32,12 +35,13 @@ app.use(session({
     secret: 'secret-key-123',
     resave: false,
     saveUninitialized: false,
-    cookie: {
-        maxAge: 60000
-    },
+    // cookie: {
+    //     maxAge: 60000
+    // },
     store: store123
 }));
-
+app.use(csrfProtection);
+app.use(flash());
 
 app.use((req, res, next) => {
     if (!req.session.user) {
@@ -52,6 +56,12 @@ app.use((req, res, next) => {
         .catch(err => {
             console.error(err);
         });
+});
+
+app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
+    next();
 });
 
 app.use('/admin123', adminRoutes);
@@ -70,18 +80,6 @@ app.use(notFound404Controller.notFound404);
 
 async function main() {
     await mongoose.connect(uri);
-    const ifAUserExists = await User.findOne();
-    if (!ifAUserExists) {
-        const user = new User({
-            name: 'ercu',
-            email: 'ercu@test.com',
-            cart: {
-                items: [],
-                totalPrice: 0
-            }
-        });
-        await user.save();
-    }
     app.listen(PORT);
 }
 
