@@ -2,10 +2,18 @@ const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 
 exports.getLogin = (req, res, next) => {
+    let message = req.flash('error123');
+
+    if (message.length > 0) {
+        message = message[0];
+    } else {
+        message = null;
+    }
+
     res.render('auth456/login456', {
         path123: '/auth444/login444',
         pageTitle123: 'Login',
-        errorMessage: req.flash('error123')
+        errorMessage: message
     });
 }
 
@@ -18,7 +26,7 @@ exports.postLogin = async (req, res, next) => {
     });
 
     if (!user) {
-        req.flash('error123', 'Invalid email or password.');
+        req.flash('error123', 'Invalid email.');
         return res.redirect('/auth789/login789');
     }
 
@@ -34,6 +42,7 @@ exports.postLogin = async (req, res, next) => {
             });
         }
 
+        req.flash('error123', 'Invalid password.');
         res.redirect('/auth789/login789');
     } catch (err) {
         console.error(err);
@@ -45,9 +54,18 @@ exports.postLogin = async (req, res, next) => {
 }
 
 exports.getSignUp = async (req, res, next) => {
+    let message = req.flash('error789');
+
+    if (message.length > 0) {
+        message = message[0];
+    } else {
+        message = null;
+    }
+
     res.render('auth456/signup456', {
         path123: '/auth444/signup444',
-        pageTitle123: 'Sign Up'
+        pageTitle123: 'Sign Up',
+        errorMessage: message
     });
 }
 
@@ -62,6 +80,7 @@ exports.postSignUp = async (req, res, next) => {
         });
 
         if (existingUser) {
+            req.flash('error789', 'E-Mail already exists.');
             return res.redirect('/auth789/signup789');
         }
 
@@ -85,7 +104,7 @@ exports.postSignUp = async (req, res, next) => {
 }
 
 exports.postLogout = async (req, res, next) => {
-    req.session.destroy(err => {
+    await req.session.destroy(err => {
         console.error(err);
         res.redirect('/');
     });
