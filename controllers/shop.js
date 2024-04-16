@@ -116,7 +116,7 @@ exports.postOrder = async (req, res, next) => {
         });
 
         const orderUser = {
-            name: req.user.name,
+            email: req.user.email,
             userId: req.user
         }
 
