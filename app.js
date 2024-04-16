@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore123 = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
+const flash = require('connect-flash');
 
 const notFound404Controller = require('./controllers/404');
 const { run } = require('./util/database');
@@ -40,7 +41,7 @@ app.use(session({
     store: store123
 }));
 app.use(csrfProtection);
-
+app.use(flash());
 
 app.use((req, res, next) => {
     if (!req.session.user) {
