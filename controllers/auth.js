@@ -115,3 +115,21 @@ exports.postLogout = async (req, res, next) => {
         res.redirect('/');
     });
 }
+
+exports.getResetPassword = (req, res, next) => {
+    let message = req.flash('error789');
+
+    if (message.length > 0) {
+        message = message[0];
+    } else {
+        message = null;
+    }
+
+    res.render('auth456/resetPassword', {
+        path123: '/reset',
+        pageTitle123: 'Reset Password',
+        errorMessage: message
+    });
+}
+
+exports.postResetPassword = (req, res, next) => { }
