@@ -120,7 +120,7 @@ exports.postLogout = async (req, res, next) => {
 }
 
 exports.getResetPassword = (req, res, next) => {
-    let message = req.flash('error789');
+    let message = req.flash('error');
 
     if (message.length > 0) {
         message = message[0];
@@ -140,7 +140,7 @@ exports.postResetPassword = async (req, res, next) => {
         try {
             if (err) {
                 console.log(err);
-                return res.redirect('/auth456/resetPassword');
+                return res.redirect('/auth789/resetPassword');
             }
 
             const token = buffer.toString('hex');
@@ -150,7 +150,7 @@ exports.postResetPassword = async (req, res, next) => {
 
             if (!user) {
                 req.flash('error', 'no account with that email found!');
-                return res.redirect('/auth456/resetPassword');
+                return res.redirect('/auth789/resetPassword');
             }
 
             user.resetToken = token;
