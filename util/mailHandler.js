@@ -11,13 +11,22 @@ const transporter = nodemailer.createTransport(sendgridTransport({
     }
 }));
 
-exports.sendMail = async (toMail, subject) => {
-    fs.readFile('./views123/mailViews456/mail.ejs', 'utf8', async (err, fileContent) => {
+exports.SIGN_UP_MAIL = './views123/mailViews456/signUpMail.ejs';
+exports.PASSWORD_RESET_MAIL = './views123/mailViews456/passwordResetMail.ejs';
+
+exports.sendMail = async (mailType, toMail, subject, token = null) => {
+    fs.readFile(mailType, 'utf8', async (err, fileContent) => {
+
+        if (mailType === this.PASSWORD_RESET_MAIL) {
+            fileContent = fileContent.replace('${token}', token);
+        }
+
         await transporter.sendMail({
             to: toMail,
             from: FROM_MAIL,
             subject: subject,
             html: fileContent
+                .replace('${email}', toMail)
         });
     });
 }
