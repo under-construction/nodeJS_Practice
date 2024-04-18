@@ -198,7 +198,8 @@ exports.getNewPassword = async (req, res, next) => {
                 path123: '/new-password',
                 pageTitle123: 'New Password',
                 errorMessage: message,
-                userId: user._id.toString()
+                userId: user._id.toString(),
+                passwordToken: token
             });
         }
     } catch (err) {
@@ -206,6 +207,31 @@ exports.getNewPassword = async (req, res, next) => {
     }
 }
 
-exports.postNewPassword = (req, res, next) => {
+exports.postNewPassword = async (req, res, next) => {
+    const newPassword = req.body.password;
+    const userId = req.body.userId;
+    const passwordToken = req.body.passwordToken;
+    let resetUser;
 
+    try {
+        const user = await User.findOne({
+            resetToken: passwordToken,
+            resetTokenExpiration: {
+                $gt: Date.now()
+            },
+            _id: userId
+        });
+
+        if (user) {
+            resetUser = user;
+            const newPasswordHashed = await bcrypt.hash(newPassword, 12);
+            resetUser.password = newPasswordHashed;
+            resetUser.resetToken = undefined;
+            resetUser.resetTokenExpiration = undefined;
+            await resetUser.save();
+            res.redirect('/auth789/login789');
+        }
+    } catch (err) {
+        console.error(err);
+    }
 }
