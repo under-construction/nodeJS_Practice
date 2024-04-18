@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer');
 const sendgridTransport = require('nodemailer-sendgrid-transport');
 require('dotenv').config();
 
-const FROM_MAIL = 'from email';
+const FROM_MAIL = process.env.FROM_MAIL;
 
 const transporter = nodemailer.createTransport(sendgridTransport({
     auth: {

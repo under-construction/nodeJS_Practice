@@ -102,7 +102,7 @@ exports.postSignUp = async (req, res, next) => {
 
         await mailHandler.sendMail(
             mailHandler.SIGN_UP_MAIL,
-            'to email',
+            email,
             'log in succeed'
         );
 
@@ -166,6 +166,8 @@ exports.postResetPassword = async (req, res, next) => {
                     token
                 );
             }
+
+            res.redirect('/');
         } catch (err) {
             console.error(err);
         }
