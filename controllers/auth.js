@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
+const mailHandler = require('../util/mailHandler');
 
 exports.getLogin = (req, res, next) => {
     let message = req.flash('error123');
@@ -96,6 +97,11 @@ exports.postSignUp = async (req, res, next) => {
         });
 
         await newUser.save();
+
+        await mailHandler.sendMail(
+            'to email',
+            'log in succeed'
+        );
 
         res.redirect('/auth789/login789');
     } catch (err) {
