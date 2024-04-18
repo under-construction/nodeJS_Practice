@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const mailHandler = require('../util/mailHandler');
@@ -99,7 +101,8 @@ exports.postSignUp = async (req, res, next) => {
         await newUser.save();
 
         await mailHandler.sendMail(
-            'to email',
+            mailHandler.SIGN_UP_MAIL,
+            email,
             'log in succeed'
         );
 
@@ -114,4 +117,121 @@ exports.postLogout = async (req, res, next) => {
         console.error(err);
         res.redirect('/');
     });
+}
+
+exports.getResetPassword = (req, res, next) => {
+    let message = req.flash('error');
+
+    if (message.length > 0) {
+        message = message[0];
+    } else {
+        message = null;
+    }
+
+    res.render('auth456/resetPassword', {
+        path123: '/reset',
+        pageTitle123: 'Reset Password',
+        errorMessage: message
+    });
+}
+
+exports.postResetPassword = async (req, res, next) => {
+    crypto.randomBytes(32, async (err, buffer) => {
+        try {
+            if (err) {
+                console.log(err);
+                return res.redirect('/auth789/resetPassword');
+            }
+
+            const token = buffer.toString('hex');
+            const user = await User.findOne({
+                email: req.body.email
+            });
+
+            if (!user) {
+                req.flash('error', 'no account with that email found!');
+                return res.redirect('/auth789/resetPassword');
+            }
+
+            user.resetToken = token;
+            user.resetTokenExpiration = Date.now() + 3600000;
+
+            const userSave = await user.save();
+
+            if (userSave) {
+                mailHandler.sendMail(
+                    mailHandler.PASSWORD_RESET_MAIL,
+                    req.body.email,
+                    'password reset',
+                    token
+                );
+            }
+
+            res.redirect('/');
+        } catch (err) {
+            console.error(err);
+        }
+    });
+}
+
+exports.getNewPassword = async (req, res, next) => {
+    const token = req.params.token;
+
+    try {
+        const user = await User.findOne({
+            resetToken: token,
+            resetTokenExpiration: {
+                $gt: Date.now()
+            }
+        });
+
+        if (user) {
+            let message = req.flash('error');
+
+            if (message.length > 0) {
+                message = message[0];
+            } else {
+                message = null;
+            }
+
+            res.render('auth456/newPassword', {
+                path123: '/new-password',
+                pageTitle123: 'New Password',
+                errorMessage: message,
+                userId: user._id.toString(),
+                passwordToken: token
+            });
+        }
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+exports.postNewPassword = async (req, res, next) => {
+    const newPassword = req.body.password;
+    const userId = req.body.userId;
+    const passwordToken = req.body.passwordToken;
+    let resetUser;
+
+    try {
+        const user = await User.findOne({
+            resetToken: passwordToken,
+            resetTokenExpiration: {
+                $gt: Date.now()
+            },
+            _id: userId
+        });
+
+        if (user) {
+            resetUser = user;
+            const newPasswordHashed = await bcrypt.hash(newPassword, 12);
+            resetUser.password = newPasswordHashed;
+            resetUser.resetToken = undefined;
+            resetUser.resetTokenExpiration = undefined;
+            await resetUser.save();
+            res.redirect('/auth789/login789');
+        }
+    } catch (err) {
+        console.error(err);
+    }
 }
