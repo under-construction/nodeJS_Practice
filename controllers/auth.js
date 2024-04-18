@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const mailHandler = require('../util/mailHandler');
@@ -99,7 +101,8 @@ exports.postSignUp = async (req, res, next) => {
         await newUser.save();
 
         await mailHandler.sendMail(
-            'to email',
+            mailHandler.SIGN_UP_MAIL,
+            email,
             'log in succeed'
         );
 
@@ -117,7 +120,7 @@ exports.postLogout = async (req, res, next) => {
 }
 
 exports.getResetPassword = (req, res, next) => {
-    let message = req.flash('error789');
+    let message = req.flash('error');
 
     if (message.length > 0) {
         message = message[0];
@@ -132,4 +135,41 @@ exports.getResetPassword = (req, res, next) => {
     });
 }
 
-exports.postResetPassword = (req, res, next) => { }
+exports.postResetPassword = async (req, res, next) => {
+    crypto.randomBytes(32, async (err, buffer) => {
+        try {
+            if (err) {
+                console.log(err);
+                return res.redirect('/auth789/resetPassword');
+            }
+
+            const token = buffer.toString('hex');
+            const user = await User.findOne({
+                email: req.body.email
+            });
+
+            if (!user) {
+                req.flash('error', 'no account with that email found!');
+                return res.redirect('/auth789/resetPassword');
+            }
+
+            user.resetToken = token;
+            user.resetTokenExpiration = Date.now() + 3600000;
+
+            const userSave = await user.save();
+
+            if (userSave) {
+                mailHandler.sendMail(
+                    mailHandler.PASSWORD_RESET_MAIL,
+                    req.body.email,
+                    'password reset',
+                    token
+                );
+            }
+
+            res.redirect('/');
+        } catch (err) {
+            console.error(err);
+        }
+    });
+}
