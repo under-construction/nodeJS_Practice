@@ -173,3 +173,39 @@ exports.postResetPassword = async (req, res, next) => {
         }
     });
 }
+
+exports.getNewPassword = async (req, res, next) => {
+    const token = req.params.token;
+
+    try {
+        const user = await User.findOne({
+            resetToken: token,
+            resetTokenExpiration: {
+                $gt: Date.now()
+            }
+        });
+
+        if (user) {
+            let message = req.flash('error');
+
+            if (message.length > 0) {
+                message = message[0];
+            } else {
+                message = null;
+            }
+
+            res.render('auth456/newPassword', {
+                path123: '/new-password',
+                pageTitle123: 'New Password',
+                errorMessage: message,
+                userId: user._id.toString()
+            });
+        }
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+exports.postNewPassword = (req, res, next) => {
+
+}
