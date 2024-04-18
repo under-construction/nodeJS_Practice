@@ -66,6 +66,11 @@ exports.postEditProduct = async (req, res, next) => {
 
     try {
         const retrievedProduct = await Product.findById(prodId);
+
+        if (retrievedProduct.userId.toString() !== req.user._id.toString()) {
+            return res.redirect('/');
+        }
+
         retrievedProduct.title = updatedTitle;
         retrievedProduct.price = updatedPrice;
         retrievedProduct.description = updatedDesc;
@@ -80,7 +85,9 @@ exports.postEditProduct = async (req, res, next) => {
 
 exports.getProducts = async (req, res, next) => {
     try {
-        const findResult = await Product.find();
+        const findResult = await Product.find({
+            userId: req.user._id
+        });
         res.render('admin123/admin-product-list', {
             prods: findResult,
             pageTitle123: 'Admin Products',
@@ -100,11 +107,17 @@ exports.deleteProduct = async (req, res, next) => {
             return;
         }
 
-        if (await req.user.isInCart(req.params.productId123)) {
-            await req.user.removeDeletedProductFromCart(productToBeDeleted);
+        if (productToBeDeleted.userId === req.user._id) {
+            if (await req.user.isInCart(req.params.productId123)) {
+                await req.user.removeDeletedProductFromCart(productToBeDeleted);
+            }
         }
 
-        const deleteResult = await productToBeDeleted.deleteOne();
+        const deleteResult = await Product.deleteOne({
+            prodId: req.params.productId123,
+            userId: req.user._id
+        });
+
         res.redirect('/admin123/product-list123');
 
     } catch (err) {
