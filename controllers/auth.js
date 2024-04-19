@@ -85,7 +85,7 @@ exports.postSignUp = async (req, res, next) => {
             .render('auth456/signup456', {
                 path123: '/auth444/signup444',
                 pageTitle123: 'Sign Up',
-                errorMessage: errors.array().msg
+                errorMessage: errors.array()[0].msg
             });
     }
 
