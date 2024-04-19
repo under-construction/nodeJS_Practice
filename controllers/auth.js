@@ -4,6 +4,8 @@ const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const mailHandler = require('../util/mailHandler');
 
+const { validationResult } = require('express-validator');
+
 exports.getLogin = (req, res, next) => {
     let message = req.flash('error123');
 
@@ -76,6 +78,16 @@ exports.postSignUp = async (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
     const confirmPassword = req.body.confirmPassword;
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(422)
+            .render('auth456/signup456', {
+                path123: '/auth444/signup444',
+                pageTitle123: 'Sign Up',
+                errorMessage: errors.array().msg
+            });
+    }
 
     try {
         const existingUser = await User.findOne({
