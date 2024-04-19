@@ -7,13 +7,31 @@ const authController = require('../controllers/auth');
 
 router.get('/login789', authController.getLogin);
 
-router.post('/postLogin456', authController.postLogin);
+router.post(
+    '/postLogin456',
+    [
+        body('email')
+            .isEmail()
+            .custom(async (value, { req }) => {
+                const userDoc = await User.findOne({ email: value })
+
+                if (!userDoc) {
+                    return Promise.reject('no such user');
+                }
+            }),
+        body('password', 'please enter a valid password')
+            .isLength({ min: 5 })
+            .isAlphanumeric()
+    ],
+    authController.postLogin
+);
 
 router.post('/postLogout456', authController.postLogout);
 
 router.get('/signup789', authController.getSignUp);
 
-router.post('/signup789',
+router.post(
+    '/signup789',
     [
         check('email')
             .isEmail()
@@ -25,7 +43,9 @@ router.post('/signup789',
                 // return true;
                 return User.findOne({ email: value })
                     .then(userDoc => {
-                        return Promise.reject('email already exists');
+                        if (userDoc) {
+                            return Promise.reject('email already exists');
+                        }
                     });
             }),
         body('password', 'please enter a password with only numbers and text and at least 5 characters')
@@ -39,7 +59,8 @@ router.post('/signup789',
                 return true;
             })
     ],
-    authController.postSignUp);
+    authController.postSignUp
+);
 
 router.get('/resetPassword', authController.getResetPassword);
 

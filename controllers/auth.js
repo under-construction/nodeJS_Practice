@@ -26,16 +26,19 @@ exports.postLogin = async (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    const user = await User.findOne({
-        email: email
-    });
+    const errorResult = validationResult(req);
 
-    if (!user) {
-        req.flash('error123', 'Invalid email.');
-        return res.redirect('/auth789/login789');
+    if (!errorResult.isEmpty()) {
+        return res.status(422)
+            .render('auth456/login456', {
+                path123: '/auth444/login444',
+                pageTitle123: 'Login',
+                errorMessage: errorResult.array()[0].msg
+            });
     }
 
     try {
+        const user = await User.findOne({ email: email });
         const pwComparison = await bcrypt.compare(password, user.password);
 
         if (pwComparison) {
@@ -52,9 +55,6 @@ exports.postLogin = async (req, res, next) => {
     } catch (err) {
         console.error(err);
         return res.redirect('/auth789/login789');
-    }
-
-    if (user) {
     }
 }
 
