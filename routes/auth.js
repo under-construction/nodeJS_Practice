@@ -12,6 +12,7 @@ router.post(
     [
         body('email')
             .isEmail()
+            .normalizeEmail()
             .custom(async (value, { req }) => {
                 const userDoc = await User.findOne({ email: value })
 
@@ -22,6 +23,7 @@ router.post(
         body('password', 'please enter a valid password')
             .isLength({ min: 5 })
             .isAlphanumeric()
+            .trim()
     ],
     authController.postLogin
 );
@@ -35,7 +37,7 @@ router.post(
     [
         check('email')
             .isEmail()
-            .withMessage('please enter a valid email')
+            .normalizeEmail()
             .custom((value, { req }) => {
                 // if (value === 'test@test.com') {
                 //     throw new Error('this email address is forbidden');
@@ -50,8 +52,10 @@ router.post(
             }),
         body('password', 'please enter a password with only numbers and text and at least 5 characters')
             .isLength({ min: 5 })
-            .isAlphanumeric(),
+            .isAlphanumeric()
+            .trim(),
         body('confirmPassword')
+            .trim()
             .custom((value, { req }) => {
                 if (value !== req.body.password) {
                     throw new Error('passwords must match');
