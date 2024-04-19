@@ -75,7 +75,8 @@ exports.getSignUp = async (req, res, next) => {
             email: '',
             password: '',
             confirmPassword: ''
-        }
+        },
+        errorArray: []
     });
 }
 
@@ -95,7 +96,8 @@ exports.postSignUp = async (req, res, next) => {
                     email: email,
                     password: password,
                     confirmPassword: req.body.confirmPassword
-                }
+                },
+                errorArray: errors.array()
             });
     }
 
