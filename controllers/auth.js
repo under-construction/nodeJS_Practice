@@ -70,7 +70,12 @@ exports.getSignUp = async (req, res, next) => {
     res.render('auth456/signup456', {
         path123: '/auth444/signup444',
         pageTitle123: 'Sign Up',
-        errorMessage: message
+        errorMessage: message,
+        oldInput: {
+            email: '',
+            password: '',
+            confirmPassword: ''
+        }
     });
 }
 
@@ -85,7 +90,12 @@ exports.postSignUp = async (req, res, next) => {
             .render('auth456/signup456', {
                 path123: '/auth444/signup444',
                 pageTitle123: 'Sign Up',
-                errorMessage: errors.array()[0].msg
+                errorMessage: errors.array()[0].msg,
+                oldInput: {
+                    email: email,
+                    password: password,
+                    confirmPassword: req.body.confirmPassword
+                }
             });
     }
 
