@@ -18,7 +18,12 @@ exports.getLogin = (req, res, next) => {
     res.render('auth456/login456', {
         path123: '/auth444/login444',
         pageTitle123: 'Login',
-        errorMessage: message
+        errorMessage: message,
+        oldInput: {
+            email: '',
+            password: ''
+        },
+        errorsArray: []
     });
 }
 
@@ -33,7 +38,12 @@ exports.postLogin = async (req, res, next) => {
             .render('auth456/login456', {
                 path123: '/auth444/login444',
                 pageTitle123: 'Login',
-                errorMessage: errorResult.array()[0].msg
+                errorMessage: errorResult.array()[0].msg,
+                oldInput: {
+                    email: email,
+                    password: password
+                },
+                errorsArray: errorResult.array()
             });
     }
 
