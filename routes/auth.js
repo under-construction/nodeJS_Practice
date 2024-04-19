@@ -13,7 +13,17 @@ router.post('/postLogout456', authController.postLogout);
 
 router.get('/signup789', authController.getSignUp);
 
-router.post('/signup789', check('email').isEmail().withMessage('please enter a valid email'), authController.postSignUp);
+router.post('/signup789',
+    check('email')
+        .isEmail()
+        .withMessage('please enter a valid email')
+        .custom((value, { req }) => {
+            if (value === 'test@test.com') {
+                throw new Error('this email address is forbidden');
+            }
+            return true;
+        }),
+    authController.postSignUp);
 
 router.get('/resetPassword', authController.getResetPassword);
 
