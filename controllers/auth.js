@@ -4,6 +4,8 @@ const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const mailHandler = require('../util/mailHandler');
 
+const { validationResult } = require('express-validator');
+
 exports.getLogin = (req, res, next) => {
     let message = req.flash('error123');
 
@@ -16,7 +18,12 @@ exports.getLogin = (req, res, next) => {
     res.render('auth456/login456', {
         path123: '/auth444/login444',
         pageTitle123: 'Login',
-        errorMessage: message
+        errorMessage: message,
+        oldInput: {
+            email: '',
+            password: ''
+        },
+        errorsArray: []
     });
 }
 
@@ -24,16 +31,24 @@ exports.postLogin = async (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    const user = await User.findOne({
-        email: email
-    });
+    const errorResult = validationResult(req);
 
-    if (!user) {
-        req.flash('error123', 'Invalid email.');
-        return res.redirect('/auth789/login789');
+    if (!errorResult.isEmpty()) {
+        return res.status(422)
+            .render('auth456/login456', {
+                path123: '/auth444/login444',
+                pageTitle123: 'Login',
+                errorMessage: errorResult.array()[0].msg,
+                oldInput: {
+                    email: email,
+                    password: password
+                },
+                errorsArray: errorResult.array()
+            });
     }
 
     try {
+        const user = await User.findOne({ email: email });
         const pwComparison = await bcrypt.compare(password, user.password);
 
         if (pwComparison) {
@@ -51,9 +66,6 @@ exports.postLogin = async (req, res, next) => {
         console.error(err);
         return res.redirect('/auth789/login789');
     }
-
-    if (user) {
-    }
 }
 
 exports.getSignUp = async (req, res, next) => {
@@ -68,7 +80,13 @@ exports.getSignUp = async (req, res, next) => {
     res.render('auth456/signup456', {
         path123: '/auth444/signup444',
         pageTitle123: 'Sign Up',
-        errorMessage: message
+        errorMessage: message,
+        oldInput: {
+            email: '',
+            password: '',
+            confirmPassword: ''
+        },
+        errorArray: []
     });
 }
 
@@ -76,17 +94,24 @@ exports.postSignUp = async (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
     const confirmPassword = req.body.confirmPassword;
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(422)
+            .render('auth456/signup456', {
+                path123: '/auth444/signup444',
+                pageTitle123: 'Sign Up',
+                errorMessage: errors.array()[0].msg,
+                oldInput: {
+                    email: email,
+                    password: password,
+                    confirmPassword: req.body.confirmPassword
+                },
+                errorArray: errors.array()
+            });
+    }
 
     try {
-        const existingUser = await User.findOne({
-            email: email
-        });
-
-        if (existingUser) {
-            req.flash('error789', 'E-Mail already exists.');
-            return res.redirect('/auth789/signup789');
-        }
-
         const hashedPassword = await bcrypt.hash(password, 12);
 
         const newUser = new User({

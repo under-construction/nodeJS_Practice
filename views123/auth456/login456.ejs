@@ -12,10 +12,10 @@
                 <%= errorMessage %>
             </div>
             <% } %>
-        <form class="login-form" action="/auth789/postLogin456" method="POST">
+        <form class="login-form" action="/auth789/postLogin456" method="POST" novalidate>
             <div class="form-control">
                 <label for="email">E-Mail:</label>
-                <input type="email" name="email" id="email">
+                <input type="email" name="email" id="email" value="<%= oldInput.email %>">
             </div>
             <div class="form-control">
                 <label for="password">Password:</label>

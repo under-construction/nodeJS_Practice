@@ -1,6 +1,15 @@
 const Product = require('../models/product');
+const { validationResult } = require('express-validator');
 
 exports.getAddProduct = (req, res, next) => {
+    let message = req.flash('error123');
+
+    if (message.length > 0) {
+        message = message[0];
+    } else {
+        message = null;
+    }
+
     if (!req.session.isLoggedIn) {
         return res.redirect('/auth789/login789');
     }
@@ -8,17 +17,33 @@ exports.getAddProduct = (req, res, next) => {
     res.render('admin123/edit-product', {
         path123: '/admin/add-product',
         pageTitle123: 'Add Product',
-        editing: false
+        editing: false,
+        errorMessage: message,
+        errorsArray: []
     });
 }
 
 exports.postAddProduct = async (req, res, next) => {
+
+    const errors = validationResult(req);
+    const errorsArray = errors.array();
+
+    if (!errors.isEmpty()) {
+        return res.status(422).render('admin123/edit-product', {
+            path123: '/admin/add-product',
+            pageTitle123: 'Add Product',
+            editing: false,
+            errorMessage: errors.array()[0].msg,
+            errorsArray: errorsArray
+        });
+    }
+
     const product = new Product({
         title: req.body.title,
         price: req.body.price,
         description: req.body.description,
         imageUrl: req.body.imageUrl,
-        userId: req.user // mongoose will only pick up _id property here
+        userId: req.user, // mongoose will only pick up _id property here,
     });
 
     try {
@@ -49,7 +74,9 @@ exports.getEditProduct = async (req, res, next) => {
             path123: '/admin/edit-product',
             pageTitle123: 'Edit Product',
             editing: true,
-            product: findResult
+            product: findResult,
+            errorMessage: '',
+            errorsArray: []
         });
     } catch (err) {
         console.error(err);
@@ -65,6 +92,27 @@ exports.postEditProduct = async (req, res, next) => {
     const updatedDesc = req.body.description;
 
     try {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return res.status(422).render(
+                'admin123/edit-product',
+                {
+                    path123: '/admin/edit-product',
+                    pageTitle123: 'Edit Product',
+                    editing: true,
+                    product: {
+                        title: updatedTitle,
+                        imageUrl: updatedImageURL,
+                        price: updatedPrice,
+                        description: updatedDesc,
+                        _id: prodId
+                    },
+                    errorMessage: errors.array()[0].msg,
+                    errorsArray: errors.array()
+                });
+        }
+
         const retrievedProduct = await Product.findById(prodId);
 
         if (retrievedProduct.userId.toString() !== req.user._id.toString()) {
@@ -107,19 +155,18 @@ exports.deleteProduct = async (req, res, next) => {
             return;
         }
 
-        if (productToBeDeleted.userId === req.user._id) {
+        if (productToBeDeleted.userId.toString() === req.user._id.toString()) {
             if (await req.user.isInCart(req.params.productId123)) {
                 await req.user.removeDeletedProductFromCart(productToBeDeleted);
             }
         }
 
         const deleteResult = await Product.deleteOne({
-            prodId: req.params.productId123,
+            _id: req.params.productId123,
             userId: req.user._id
         });
 
         res.redirect('/admin123/product-list123');
-
     } catch (err) {
         console.error(err);
     }
