@@ -13,7 +13,7 @@ router.post(
         body('email')
             .isEmail()
             .normalizeEmail()
-            .custom(async (value, { req }) => {
+            .custom(async value => {
                 const userDoc = await User.findOne({ email: value })
 
                 if (!userDoc) {
@@ -38,17 +38,17 @@ router.post(
         check('email')
             .isEmail()
             .normalizeEmail()
-            .custom((value, { req }) => {
+            .custom(async value => {
                 // if (value === 'test@test.com') {
                 //     throw new Error('this email address is forbidden');
                 // }
                 // return true;
-                return User.findOne({ email: value })
-                    .then(userDoc => {
-                        if (userDoc) {
-                            return Promise.reject('email already exists');
-                        }
-                    });
+
+                const userDoc = await User.findOne({ email: value });
+
+                if (userDoc) {
+                    return await Promise.reject('email already exists123');
+                }
             }),
         body('password', 'please enter a password with only numbers and text and at least 5 characters')
             .isLength({ min: 5 })
