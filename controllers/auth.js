@@ -7,24 +7,30 @@ const mailHandler = require('../util/mailHandler');
 const { validationResult } = require('express-validator');
 
 exports.getLogin = (req, res, next) => {
-    let message = req.flash('error123');
+    try {
+        let message = req.flash('error123');
 
-    if (message.length > 0) {
-        message = message[0];
-    } else {
-        message = null;
+        if (message.length > 0) {
+            message = message[0];
+        } else {
+            message = null;
+        }
+
+        res.render('auth456/login456', {
+            path123: '/auth444/login444',
+            pageTitle123: 'Login',
+            errorMessage: message,
+            oldInput: {
+                email: '',
+                password: ''
+            },
+            errorsArray: []
+        });
+    } catch (err) {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(err);
     }
-
-    res.render('auth456/login456', {
-        path123: '/auth444/login444',
-        pageTitle123: 'Login',
-        errorMessage: message,
-        oldInput: {
-            email: '',
-            password: ''
-        },
-        errorsArray: []
-    });
 }
 
 exports.postLogin = async (req, res, next) => {
@@ -63,31 +69,38 @@ exports.postLogin = async (req, res, next) => {
         req.flash('error123', 'Invalid password.');
         res.redirect('/auth789/login789');
     } catch (err) {
-        console.error(err);
-        return res.redirect('/auth789/login789');
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(err);
     }
 }
 
 exports.getSignUp = async (req, res, next) => {
-    let message = req.flash('error789');
+    try {
+        let message = req.flash('error789');
 
-    if (message.length > 0) {
-        message = message[0];
-    } else {
-        message = null;
+        if (message.length > 0) {
+            message = message[0];
+        } else {
+            message = null;
+        }
+
+        res.render('auth456/signup456', {
+            path123: '/auth444/signup444',
+            pageTitle123: 'Sign Up',
+            errorMessage: message,
+            oldInput: {
+                email: '',
+                password: '',
+                confirmPassword: ''
+            },
+            errorArray: []
+        });
+    } catch (err) {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(err);
     }
-
-    res.render('auth456/signup456', {
-        path123: '/auth444/signup444',
-        pageTitle123: 'Sign Up',
-        errorMessage: message,
-        oldInput: {
-            email: '',
-            password: '',
-            confirmPassword: ''
-        },
-        errorArray: []
-    });
 }
 
 exports.postSignUp = async (req, res, next) => {
@@ -133,31 +146,45 @@ exports.postSignUp = async (req, res, next) => {
 
         res.redirect('/auth789/login789');
     } catch (err) {
-        console.error(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(err);
     }
 }
 
 exports.postLogout = async (req, res, next) => {
-    await req.session.destroy(err => {
-        console.error(err);
-        res.redirect('/');
-    });
+    try {
+        await req.session.destroy(err => {
+            console.error(err);
+            res.redirect('/');
+        });
+    } catch (err) {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(err);
+    }
 }
 
 exports.getResetPassword = (req, res, next) => {
-    let message = req.flash('error');
+    try {
+        let message = req.flash('error');
 
-    if (message.length > 0) {
-        message = message[0];
-    } else {
-        message = null;
+        if (message.length > 0) {
+            message = message[0];
+        } else {
+            message = null;
+        }
+
+        res.render('auth456/resetPassword', {
+            path123: '/reset',
+            pageTitle123: 'Reset Password',
+            errorMessage: message
+        });
+    } catch (err) {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(err);
     }
-
-    res.render('auth456/resetPassword', {
-        path123: '/reset',
-        pageTitle123: 'Reset Password',
-        errorMessage: message
-    });
 }
 
 exports.postResetPassword = async (req, res, next) => {
@@ -194,7 +221,9 @@ exports.postResetPassword = async (req, res, next) => {
 
             res.redirect('/');
         } catch (err) {
-            console.error(err);
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(err);
         }
     });
 }
@@ -228,7 +257,9 @@ exports.getNewPassword = async (req, res, next) => {
             });
         }
     } catch (err) {
-        console.error(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(err);
     }
 }
 
@@ -257,6 +288,8 @@ exports.postNewPassword = async (req, res, next) => {
             res.redirect('/auth789/login789');
         }
     } catch (err) {
-        console.error(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(err);
     }
 }
