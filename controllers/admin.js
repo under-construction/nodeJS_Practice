@@ -136,14 +136,17 @@ exports.getProducts = async (req, res, next) => {
         const findResult = await Product.find({
             userId: req.user._id
         });
-        //sad uncomment to get an error
+
+        // throw new Error('an error occured');
+
         res.render('admin123/admin-product-list', {
             prods: findResult,
             pageTitle123: 'Admin Products',
             path123: '/admin/product-list'
         });
     } catch (err) {
-        res.status(500).redirect('/500');
+        console.log(err);
+        next(err);
     }
 }
 
