@@ -48,7 +48,7 @@ exports.postAddProduct = async (req, res, next) => {
         title: req.body.title,
         price: req.body.price,
         description: req.body.description,
-        imageUrl: req.body.imageUrl,
+        imageUrl: req.body.image,
         userId: req.user, // mongoose will only pick up _id property here,
     });
 
@@ -97,7 +97,7 @@ exports.postEditProduct = async (req, res, next) => {
     const prodId = req.body.prodId123;
 
     const updatedTitle = req.body.title;
-    const updatedImageURL = req.body.imageUrl;
+    const updatedImageURL = req.body.image;
     const updatedPrice = req.body.price;
     const updatedDesc = req.body.description;
 
