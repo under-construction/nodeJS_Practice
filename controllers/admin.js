@@ -2,25 +2,31 @@ const Product = require('../models/product');
 const { validationResult } = require('express-validator');
 
 exports.getAddProduct = (req, res, next) => {
-    let message = req.flash('error123');
+    try {
+        let message = req.flash('error123');
 
-    if (message.length > 0) {
-        message = message[0];
-    } else {
-        message = null;
+        if (message.length > 0) {
+            message = message[0];
+        } else {
+            message = null;
+        }
+
+        if (!req.session.isLoggedIn) {
+            return res.redirect('/auth789/login789');
+        }
+
+        res.render('admin123/edit-product', {
+            path123: '/admin/add-product',
+            pageTitle123: 'Add Product',
+            editing: false,
+            errorMessage: message,
+            errorsArray: []
+        });
+    } catch (err) {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(err);
     }
-
-    if (!req.session.isLoggedIn) {
-        return res.redirect('/auth789/login789');
-    }
-
-    res.render('admin123/edit-product', {
-        path123: '/admin/add-product',
-        pageTitle123: 'Add Product',
-        editing: false,
-        errorMessage: message,
-        errorsArray: []
-    });
 }
 
 exports.postAddProduct = async (req, res, next) => {
@@ -50,7 +56,9 @@ exports.postAddProduct = async (req, res, next) => {
         const saveResult = await product.save();
         res.redirect('/');
     } catch (err) {
-        console.error(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(err);
     } finally {
         console.log('product was successfully saved');
     }
@@ -79,7 +87,9 @@ exports.getEditProduct = async (req, res, next) => {
             errorsArray: []
         });
     } catch (err) {
-        console.error(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(err);
     }
 }
 
@@ -127,7 +137,9 @@ exports.postEditProduct = async (req, res, next) => {
 
         res.redirect('/');
     } catch (err) {
-        console.error(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(err);
     }
 }
 
@@ -136,13 +148,18 @@ exports.getProducts = async (req, res, next) => {
         const findResult = await Product.find({
             userId: req.user._id
         });
+
+        // throw new Error('an error occured');
+
         res.render('admin123/admin-product-list', {
             prods: findResult,
             pageTitle123: 'Admin Products',
             path123: '/admin/product-list'
         });
     } catch (err) {
-        console.error(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(err);
     }
 }
 
@@ -168,6 +185,8 @@ exports.deleteProduct = async (req, res, next) => {
 
         res.redirect('/admin123/product-list123');
     } catch (err) {
-        console.error(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(err);
     }
 }

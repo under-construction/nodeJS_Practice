@@ -7,7 +7,7 @@ const MongoDBStore123 = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
 
-const notFound404Controller = require('./controllers/404');
+const errorController = require('./controllers/404');
 const { run } = require('./util/database');
 const User = require('./models/user');
 
@@ -50,10 +50,16 @@ app.use(async (req, res, next) => {
 
     try {
         const user = await User.findById(req.session.user._id);
+
+        if (!user) {
+            return next();
+        }
+
         req.user = user;
+
         next(); // stops sending request-based operations to the next middleware after this 
     } catch (error) {
-        console.error(error);
+        throw new Error(error);
     }
 });
 
@@ -79,7 +85,12 @@ app.use('/auth789', authRoutes);
 //     run();
 // })
 
-app.use(notFound404Controller.notFound404);
+app.use('/500', errorController.internalServer500);
+app.use(errorController.notFound404);
+
+app.use((err, req, res, next) => {
+    res.redirect('/500');
+});
 
 async function main() {
     await mongoose.connect(uri);
