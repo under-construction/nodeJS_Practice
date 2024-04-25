@@ -4,3 +4,10 @@ exports.notFound404 = (req, res, next) => {
         path123: 'ssss'
     });
 }
+
+exports.internalServer500 = (req, res, next) => {
+    res.render('500', {
+        pageTitle123: 'Internal server error!',
+        path123: 'ssss'
+    });
+}
