@@ -88,6 +88,10 @@ app.use('/auth789', authRoutes);
 app.use('/500', errorController.internalServer500);
 app.use(errorController.notFound404);
 
+app.use((err, req, res, next) => {
+    res.redirect('/500');
+});
+
 async function main() {
     await mongoose.connect(uri);
     app.listen(PORT);
