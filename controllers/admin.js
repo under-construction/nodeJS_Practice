@@ -44,6 +44,8 @@ exports.postAddProduct = async (req, res, next) => {
         });
     }
 
+    console.log(req.file);
+
     const product = new Product({
         title: req.body.title,
         price: req.body.price,

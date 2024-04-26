@@ -6,6 +6,7 @@ const session = require('express-session');
 const MongoDBStore123 = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
+const multer = require('multer');
 
 const errorController = require('./controllers/404');
 const { run } = require('./util/database');
@@ -30,6 +31,14 @@ app.set('view engine', 'ejs');
 app.set('views', 'views123');
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(
+    multer(
+        {
+            dest: 'images1234'
+        }
+    )
+        .single('image123')
+);
 app.use(express.static(path.join(__dirname, 'public1234')));
 app.use(session({
     secret: 'secret-key-123',
