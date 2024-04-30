@@ -64,8 +64,7 @@ exports.postAddProduct = async (req, res, next) => {
             product: {
                 title: title,
                 price: price,
-                description: description,
-                imageUrl: image.path
+                description: description
             }
         });
     }
@@ -137,7 +136,6 @@ exports.postEditProduct = async (req, res, next) => {
                     editing: true,
                     product: {
                         title: updatedTitle,
-                        imageUrl: updatedImageURL,
                         price: updatedPrice,
                         description: updatedDesc,
                         _id: prodId
@@ -156,9 +154,11 @@ exports.postEditProduct = async (req, res, next) => {
         retrievedProduct.title = updatedTitle;
         retrievedProduct.price = updatedPrice;
         retrievedProduct.description = updatedDesc;
+
         if (image) {
             retrievedProduct.imageUrl = image.path;
         }
+
         const saveResult = await retrievedProduct.save();
 
         res.redirect('/');
