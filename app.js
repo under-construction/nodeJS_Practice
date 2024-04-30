@@ -62,6 +62,7 @@ app.use(
         .single('image1234')
 );
 app.use(express.static(path.join(__dirname, 'public1234')));
+app.use('/images1234', express.static(path.join(__dirname, 'images1234')));
 app.use(session({
     secret: 'secret-key-123',
     resave: false,
