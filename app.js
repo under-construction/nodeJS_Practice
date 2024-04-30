@@ -27,6 +27,27 @@ const store123 = new MongoDBStore123({
 });
 const csrfProtection = csrf();
 
+const fileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'images1234');
+    },
+    filename: (req, file, cb) => {
+        cb(null, new Date().toISOString().replaceAll(':', '-').replace('.', '-') + '-' + file.originalname);
+    },
+});
+
+const fileFilter = (req, file, cb) => {
+    if (
+        file.mimetype === 'image/png'
+        || file.mimetype === 'image/jpg'
+        || file.mimetype === 'image/jpeg'
+    ) {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    }
+}
+
 app.set('view engine', 'ejs');
 app.set('views', 'views123');
 
@@ -34,10 +55,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
     multer(
         {
-            dest: 'images1234'
+            storage: fileStorage,
+            fileFilter: fileFilter
         }
     )
-        .single('image123')
+        .single('image1234')
 );
 app.use(express.static(path.join(__dirname, 'public1234')));
 app.use(session({
@@ -98,6 +120,7 @@ app.use('/500', errorController.internalServer500);
 app.use(errorController.notFound404);
 
 app.use((err, req, res, next) => {
+    console.log(err);
     res.redirect('/500');
 });
 

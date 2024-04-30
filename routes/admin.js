@@ -50,10 +50,6 @@ router.post('/edit-product',
             .isLength({ min: 5 })
             .withMessage('title must be at least 5 characters long')
             .trim(),
-        body('imageUrl')
-            .isURL()
-            .withMessage('image url must be proper')
-            .trim(),
         body('price')
             .isNumeric()
             .withMessage('price must be a number')
