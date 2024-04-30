@@ -31,6 +31,13 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = async (req, res, next) => {
 
+    const title = req.body.title;
+    const price = req.body.price;
+    const description = req.body.description;
+    const imageUrl = req.file;
+
+    console.log(imageUrl);
+
     const errors = validationResult(req);
     const errorsArray = errors.array();
 
@@ -40,17 +47,21 @@ exports.postAddProduct = async (req, res, next) => {
             pageTitle123: 'Add Product',
             editing: false,
             errorMessage: errors.array()[0].msg,
-            errorsArray: errorsArray
+            errorsArray: errorsArray,
+            product: {
+                title: title,
+                price: price,
+                description: description,
+                imageUrl: imageUrl
+            }
         });
     }
 
-    console.log(req.file);
-
     const product = new Product({
-        title: req.body.title,
-        price: req.body.price,
-        description: req.body.description,
-        imageUrl: req.body.image,
+        title: title,
+        price: price,
+        description: description,
+        imageUrl: imageUrl,
         userId: req.user, // mongoose will only pick up _id property here,
     });
 
@@ -61,8 +72,6 @@ exports.postAddProduct = async (req, res, next) => {
         const error = new Error(err);
         error.httpStatusCode = 500;
         return next(err);
-    } finally {
-        console.log('product was successfully saved');
     }
 }
 
