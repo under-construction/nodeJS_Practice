@@ -34,9 +34,22 @@ exports.postAddProduct = async (req, res, next) => {
     const title = req.body.title;
     const price = req.body.price;
     const description = req.body.description;
-    const imageUrl = req.file;
+    const image = req.file;
 
-    console.log(imageUrl);
+    if (!image) {
+        return res.status(422).render('admin123/edit-product', {
+            path123: '/admin/add-product',
+            pageTitle123: 'Add Product',
+            editing: false,
+            errorMessage: 'Attached file is not an image.',
+            errorsArray: [],
+            product: {
+                title: title,
+                price: price,
+                description: description
+            }
+        });
+    }
 
     const errors = validationResult(req);
     const errorsArray = errors.array();
@@ -52,7 +65,7 @@ exports.postAddProduct = async (req, res, next) => {
                 title: title,
                 price: price,
                 description: description,
-                imageUrl: imageUrl
+                imageUrl: image.path
             }
         });
     }
@@ -61,7 +74,7 @@ exports.postAddProduct = async (req, res, next) => {
         title: title,
         price: price,
         description: description,
-        imageUrl: imageUrl,
+        imageUrl: image.path,
         userId: req.user, // mongoose will only pick up _id property here,
     });
 
@@ -108,7 +121,7 @@ exports.postEditProduct = async (req, res, next) => {
     const prodId = req.body.prodId123;
 
     const updatedTitle = req.body.title;
-    const updatedImageURL = req.body.image;
+    const image = req.file;
     const updatedPrice = req.body.price;
     const updatedDesc = req.body.description;
 
@@ -143,7 +156,9 @@ exports.postEditProduct = async (req, res, next) => {
         retrievedProduct.title = updatedTitle;
         retrievedProduct.price = updatedPrice;
         retrievedProduct.description = updatedDesc;
-        retrievedProduct.imageUrl = updatedImageURL;
+        if (image) {
+            retrievedProduct.imageUrl = image.path;
+        }
         const saveResult = await retrievedProduct.save();
 
         res.redirect('/');
