@@ -2,6 +2,7 @@ const Product = require('../models/product');
 const Order = require('../models/order');
 const fs = require('fs');
 const path = require('path');
+const PDFDocument = require('pdfkit');
 
 exports.getProducts = async (req, res, next) => {
     try {
@@ -178,6 +179,14 @@ exports.getInvoice = async (req, res, next) => {
 
         const invoiceName = 'invoice-' + orderId + '.pdf';
         const invoicePath = path.join('data', 'invoices', invoiceName);
+
+        const pdfDoc = new PDFDocument();
+        pdfDoc.pipe(fs.createWriteStream(invoicePath));
+        pdfDoc.pipe(res);
+
+        pdfDoc.text('Hello world');
+        pdfDoc.end();
+
         const file = fs.createReadStream(invoicePath);
 
         res.setHeader('Content-Type', 'application/pdf');
