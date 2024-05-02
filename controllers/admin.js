@@ -1,5 +1,6 @@
 const Product = require('../models/product');
 const { validationResult } = require('express-validator');
+const fileHelper = require('../util/file');
 
 exports.getAddProduct = (req, res, next) => {
     try {
@@ -156,6 +157,7 @@ exports.postEditProduct = async (req, res, next) => {
         retrievedProduct.description = updatedDesc;
 
         if (image) {
+            fileHelper.deleteFile(retrievedProduct.imageUrl);
             retrievedProduct.imageUrl = image.path;
         }
 
@@ -194,8 +196,7 @@ exports.deleteProduct = async (req, res, next) => {
         const productToBeDeleted = await Product.findById(req.params.productId123);
 
         if (!productToBeDeleted) {
-            res.redirect('/');
-            return;
+            return next(new Error('product not found'));
         }
 
         if (productToBeDeleted.userId.toString() === req.user._id.toString()) {
@@ -203,6 +204,8 @@ exports.deleteProduct = async (req, res, next) => {
                 await req.user.removeDeletedProductFromCart(productToBeDeleted);
             }
         }
+
+        fileHelper.deleteFile(productToBeDeleted.imageUrl);
 
         const deleteResult = await Product.deleteOne({
             _id: req.params.productId123,
