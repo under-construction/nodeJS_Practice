@@ -12,7 +12,6 @@
                     <% orders.forEach(i => { %>
                         <li class="orders__item">
                             <h1># <%= i._id %></h1>
-                            <h2>Total Price: <%= i.totalPrice %></h2>
                             <ul class="orders__products">
                                 <% i.products.forEach(j => { %>
                                     <li class="orders__products-item">
@@ -20,6 +19,7 @@
                                     </li>
                                 <% }); %>
                             </ul>
+                            <h2>Total Price: <%= i.totalPrice %></h2>
                             <a href="/orders/<%= i._id %>">Invoice</a>
                         </li>
                     <% }); %>
