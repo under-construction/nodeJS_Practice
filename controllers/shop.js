@@ -184,7 +184,50 @@ exports.getInvoice = async (req, res, next) => {
         pdfDoc.pipe(fs.createWriteStream(invoicePath));
         pdfDoc.pipe(res);
 
-        pdfDoc.text('Hello world');
+        pdfDoc
+            .fontSize(26)
+            .text('Invoice', {
+                align: 'center',
+                underline: true
+            });
+
+        const array = order.products.map(i => {
+            return `${i.product.title}: ${i.quantity} x ${i.product.price} = ${i.quantity * i.product.price}`;
+        });
+
+        pdfDoc
+            .fontSize(14)
+            .list(
+                array,
+                {
+                    width: 200,
+                    align: 'left',
+                    listType: 'bullet',
+                    bulletRadius: 1,
+                    lineGap: 10
+                });
+
+        pdfDoc.text('**********');
+
+        pdfDoc
+            .fontSize(24)
+            .text(
+                `Total Price: ${order.totalPrice}`,
+                {
+                    align: 'right',
+                    lineGap: 50
+                }
+            );
+
+        pdfDoc
+            .fontSize(18)
+            .text(
+                'End of the document',
+                {
+                    align: 'center'
+                }
+            );
+
         pdfDoc.end();
 
         const file = fs.createReadStream(invoicePath);
