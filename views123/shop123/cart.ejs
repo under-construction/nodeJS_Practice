@@ -4,6 +4,21 @@
 <body>
     <%- include('../includes123/navigation.ejs') %>
 
+    <div style="margin: 1rem 1rem">
+        <div style="margin: 1rem 0">
+            <h2>Total Price: <%= cart.totalPrice %></h2>
+            <a href="/clearCart" class="btn">Clear Cart</a>
+        </div>
+        <div>
+            <form action="/create-order" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn">Order Now!</button>
+            </form>
+        </div>
+    </div>
+
+    <hr>
+
     <main>
         <% if (cart.items.length > 0) { %>
             <ul class="cart__item-list">
@@ -22,18 +37,6 @@
                     </li>
                 <% }) %>
             </ul>
-                <hr>
-                <div>
-                    <h2>Total Price: <%= cart.totalPrice %></h2>
-                    <a href="/clearCart" class="btn">Clear Cart</a>
-                </div>
-
-            <div style="margin: 1rem 0">
-                <form action="/create-order" method="POST">
-                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                    <button type="submit" class="btn">Order Now!</button>
-                </form>
-            </div>
         <% } else { %>
             <h1>No products in cart! Add one now!</h1>
             <h2>Total Price: 0</h2>

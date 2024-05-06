@@ -19,9 +19,6 @@ router.post(
             .withMessage('title must be a proper string')
             .isLength({ min: 5 })
             .withMessage('title must be at least 5 characters long'),
-        body('imageUrl')
-            .isURL()
-            .withMessage('image url must be proper'),
         body('price')
             .isNumeric()
             .withMessage('price must be a number')
@@ -52,10 +49,6 @@ router.post('/edit-product',
             .withMessage('title must be a proper string')
             .isLength({ min: 5 })
             .withMessage('title must be at least 5 characters long')
-            .trim(),
-        body('imageUrl')
-            .isURL()
-            .withMessage('image url must be proper')
             .trim(),
         body('price')
             .isNumeric()
