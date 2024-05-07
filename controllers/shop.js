@@ -4,13 +4,26 @@ const fs = require('fs');
 const path = require('path');
 const PDFDocument = require('pdfkit');
 
+const ITEMS_PER_PAGE = 2;
+
 exports.getProducts = async (req, res, next) => {
     try {
-        const findResult = await Product.find();
+        const page = +req.query.page || 1;
+        const totalItems = await Product.find().count();
+        const findResult = await Product.find()
+            .skip((page - 1) * ITEMS_PER_PAGE)
+            .limit(ITEMS_PER_PAGE);
         res.render('shop123/shop-product-list', {
             prods: findResult,
             pageTitle123: 'Shop123',
-            path123: '/products'
+            path123: '/products',
+            totalProducts: totalItems,
+            currentPage: page,
+            hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
         });
     } catch (err) {
         const error = new Error(err);
@@ -21,13 +34,24 @@ exports.getProducts = async (req, res, next) => {
 
 exports.getIndex = async (req, res, next) => {
     try {
+        const page = +req.query.page || 1;
+        const totalItems = await Product.find().count();
         const findResult = await Product.find()
+            .skip((page - 1) * ITEMS_PER_PAGE)
+            .limit(ITEMS_PER_PAGE);
         // .select('title price -_id')
         // .populate('userId', 'name')
         res.render('shop123/index', {
             prods: findResult,
             pageTitle123: 'Shop123',
-            path123: '/shop'
+            path123: '/shop',
+            totalProducts: totalItems,
+            currentPage: page,
+            hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
         });
     } catch (err) {
         const error = new Error(err);
