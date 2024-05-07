@@ -23,7 +23,7 @@ exports.getProducts = async (req, res, next) => {
 
 exports.getIndex = async (req, res, next) => {
     try {
-        const page = req.query.page;
+        const page = +req.query.page;
         const totalItems = await Product.find().count();
         const findResult = await Product.find()
             .skip((page - 1) * ITEMS_PER_PAGE)
@@ -35,6 +35,7 @@ exports.getIndex = async (req, res, next) => {
             pageTitle123: 'Shop123',
             path123: '/shop',
             totalProducts: totalItems,
+            currentPage: page,
             hasNextPage: ITEMS_PER_PAGE * page < totalItems,
             hasPreviousPage: page > 1,
             nextPage: page + 1,
