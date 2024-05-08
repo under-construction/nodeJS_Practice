@@ -212,10 +212,8 @@ exports.deleteProduct = async (req, res, next) => {
             userId: req.user._id
         });
 
-        res.redirect('/admin123/product-list123');
+        res.status(200).json({ message: 'success!' });
     } catch (err) {
-        const error = new Error(err);
-        error.httpStatusCode = 500;
-        return next(err);
+        res.status(500).json({ message: 'product deletion failed...' });
     }
 }
