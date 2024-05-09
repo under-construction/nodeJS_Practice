@@ -273,3 +273,19 @@ exports.getInvoice = async (req, res, next) => {
         return next(err);
     }
 }
+
+exports.getCheckOut = async (req, res, next) => {
+    try {
+        const cart = await req.user.getCart();
+        console.log(cart);
+        res.render('shop123/checkout', {
+            path123: '/checkout',
+            pageTitle123: 'Checkout',
+            cart: cart
+        });
+    } catch (err) {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+    }
+}

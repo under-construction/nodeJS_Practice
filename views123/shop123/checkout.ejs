@@ -1,0 +1,22 @@
+<%- include('../includes123/head.ejs') %>
+<link rel="stylesheet" href="/css/cart.css">
+</head>
+<body>
+    <%- include('../includes123/navigation.ejs') %>
+
+    <main>
+        <ul class="cart__item-list">
+            <% cart.items.forEach(item => { %>
+                <li class="cart__item">
+                    <h2>Product Name: <%= item.title %></h2>
+                    <h2>Price: <%= item.price %></h2>
+                    <h2>Quantity: <%= item.quantity %></h2>
+                </li>
+            <% }) %>
+        </ul>
+        <div class="centered">
+            <h2>Total: <%= cart.totalPrice %></h2>
+        </div>
+    </main>
+
+    <%- include('../includes123/end.ejs') %>
