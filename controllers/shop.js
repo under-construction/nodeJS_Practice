@@ -3,6 +3,7 @@ const Order = require('../models/order');
 const fs = require('fs');
 const path = require('path');
 const PDFDocument = require('pdfkit');
+const stripe = require('stripe')('sk_test_51PESFNI3G93qFJEeBRI4h2xRYMOI85lTON6DytCDcU1Jhy1mZygjEEJVBepdMLGaqzOpFcFQs3IqGJFwezhKPBMX00wMMQjqXL');
 
 const ITEMS_PER_PAGE = 2;
 
@@ -277,15 +278,41 @@ exports.getInvoice = async (req, res, next) => {
 exports.getCheckOut = async (req, res, next) => {
     try {
         const cart = await req.user.getCart();
-        console.log(cart);
+
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: cart.items.map(i => {
+                return {
+                    price_data: {
+                        currency: 'usd',
+                        unit_amount: i.price * 100,
+                        product_data: {
+                            name: i.title
+                        }
+                    },
+                    quantity: i.quantity
+                }
+            }),
+            mode: 'payment',
+            success_url: req.protocol + '://' + req.get('host') + '/checkout/success',
+            cancel_url: req.protocol + '://' + req.get('host') + '/checkout/cancel'
+        });
         res.render('shop123/checkout', {
             path123: '/checkout',
             pageTitle123: 'Checkout',
-            cart: cart
+            cart: cart,
+            sessionId: session.id
         });
     } catch (err) {
         const error = new Error(err);
         error.httpStatusCode = 500;
         return next(error);
     }
+}
+
+exports.getCheckOutCancel = (req, res, next) => {
+    res.render('shop123/checkOutCancel', {
+        pageTitle123: 'Checkout canceled',
+        path123: 'checkoutCancel'
+    });
 }
