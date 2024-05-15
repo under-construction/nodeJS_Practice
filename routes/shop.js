@@ -17,6 +17,12 @@ router.post('/cart', isAuth, shopController.postCart);
 
 router.get('/orders', isAuth, shopController.getOrders);
 
+router.get('/checkout', isAuth, shopController.getCheckOut);
+
+router.get('/checkout/success', shopController.postOrder);
+
+router.get('/checkout/cancel', shopController.getCheckOutCancel);
+
 router.post('/delete-product', isAuth, shopController.deleteProductFromCart);
 
 router.get('/clearCart', isAuth, shopController.clearCart);

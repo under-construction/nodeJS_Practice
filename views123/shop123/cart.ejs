@@ -1,4 +1,5 @@
 <%- include('../includes123/head.ejs') %>
+<link rel="stylesheet" href="/css/cart.css">
 </head>
 
 <body>
@@ -10,10 +11,11 @@
             <a href="/clearCart" class="btn">Clear Cart</a>
         </div>
         <div>
-            <form action="/create-order" method="POST">
+            <!-- <form action="/create-order" method="POST">
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <button type="submit" class="btn">Order Now!</button>
-            </form>
+            </form> -->
+            <a href="/checkout" class="btn">Order Now!</a>
         </div>
     </div>
 
@@ -25,7 +27,6 @@
                 <% cart.items.forEach(item => { %>
                     <li class="cart__item">
                         <h2>Product Name: <%= item.title %></h2>
-                        <h2>Product ID: <%= item.productId %></h2>
                         <h2>Price: <%= item.price %></h2>
                         <h2>Quantity: <%= item.quantity %></h2>
                         <form action="/delete-product" method="post">
@@ -33,7 +34,7 @@
                             <input type="hidden" name="productPrice123" value="<%= item.price %>">
                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <button class="btn" type="submit">Remove</button>
-                        </form>
+                        </form>                        
                     </li>
                 <% }) %>
             </ul>
