@@ -3,7 +3,7 @@ const Order = require('../models/order');
 const fs = require('fs');
 const path = require('path');
 const PDFDocument = require('pdfkit');
-const stripe = require('stripe')('sk_test_51PESFNI3G93qFJEeBRI4h2xRYMOI85lTON6DytCDcU1Jhy1mZygjEEJVBepdMLGaqzOpFcFQs3IqGJFwezhKPBMX00wMMQjqXL');
+const stripe = require('stripe')(`${process.env.STRIPE_KEY}`);
 
 const ITEMS_PER_PAGE = 2;
 

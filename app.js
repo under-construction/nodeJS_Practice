@@ -7,6 +7,7 @@ const MongoDBStore123 = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
 const multer = require('multer');
+require('dotenv').config();
 
 const errorController = require('./controllers/404');
 const { run } = require('./util/database');
@@ -14,7 +15,7 @@ const User = require('./models/user');
 
 const PORT = 3080;
 
-const uri = 'mongodb+srv://sa:123@mongodbpractice123.zxtp6fe.mongodb.net/shopDatabase987?w=majority&appName=mongoDBPractice123';
+const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@mongodbpractice123.zxtp6fe.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}?w=majority&appName=mongoDBPractice123`;
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
