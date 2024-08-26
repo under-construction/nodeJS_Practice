@@ -8,12 +8,13 @@ const csrf = require('csurf');
 const flash = require('connect-flash');
 const multer = require('multer');
 require('dotenv').config();
+const helmet = require('helmet');
 
 const errorController = require('./controllers/404');
 const { run } = require('./util/database');
 const User = require('./models/user');
 
-const PORT = 3080;
+const PORT = process.env.port;
 
 const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@mongodbpractice123.zxtp6fe.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}?w=majority&appName=mongoDBPractice123`;
 
@@ -22,6 +23,9 @@ const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
 const app = express();
+
+app.use(helmet());
+
 const store123 = new MongoDBStore123({
     uri: uri,
     collection: 'mySessions987'
