@@ -9,6 +9,7 @@ const flash = require('connect-flash');
 const multer = require('multer');
 require('dotenv').config();
 const helmet = require('helmet');
+const compression = require('compression');
 
 const errorController = require('./controllers/404');
 const { run } = require('./util/database');
@@ -25,6 +26,7 @@ const authRoutes = require('./routes/auth');
 const app = express();
 
 app.use(helmet());
+// app.use(compression());
 
 const store123 = new MongoDBStore123({
     uri: uri,
