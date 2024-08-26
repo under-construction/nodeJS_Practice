@@ -10,6 +10,8 @@ const multer = require('multer');
 require('dotenv').config();
 const helmet = require('helmet');
 const compression = require('compression');
+const morgan = require('morgan');
+const fs = require('fs');
 
 const errorController = require('./controllers/404');
 const { run } = require('./util/database');
@@ -23,10 +25,18 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
+const accessLogStream = fs.createWriteStream(
+    path.join(__dirname, 'access.log'),
+    { flags: 'a' }
+);
+
 const app = express();
 
 app.use(helmet());
-// app.use(compression());
+app.use(compression());
+app.use(morgan('combined', {
+    stream: accessLogStream
+}));
 
 const store123 = new MongoDBStore123({
     uri: uri,

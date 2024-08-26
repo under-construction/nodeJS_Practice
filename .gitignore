@@ -4,3 +4,5 @@ data
 images1234
 
 .env
+
+access.log
